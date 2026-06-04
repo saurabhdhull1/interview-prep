@@ -2222,6 +2222,306 @@ prevProps === nextProps (shallow)
 
 // Fix: memoize with useMemo / useCallback, or keep outside render`
   },
+
+  // ─── NEW: CORE JS ──────────────────────────────────────────────
+  {
+    category: "Core JavaScript",
+    q: "Optional chaining (?.) and Nullish coalescing (??) — explain",
+    tags: ["popular"],
+    a: `// Optional chaining (?.) — safely access nested properties without error
+const user = { profile: { name: "John" } };
+console.log(user?.profile?.name);  // "John"
+console.log(user?.address?.city); // undefined (no error!)
+
+// Nullish coalescing (??) — returns RHS only when LHS is null/undefined
+// Unlike || which treats all falsy values (0, '', false) as missing
+const score = 0;
+console.log(score || 100);  // 100  (0 is falsy)
+console.log(score ?? 100); // 0    (0 is NOT null/undefined)
+
+// ?? vs ||:
+const name = "";
+console.log(name || "Guest");   // "Guest"  ("" is falsy)
+console.log(name ?? "Guest");   // ""       ("" is NOT null/undefined)`
+  },
+  {
+    category: "Core JavaScript",
+    q: "Promise combinators — allSettled, race, any, all",
+    tags: ["advanced"],
+    a: `// Promise.all — reject fast (fail on first rejection)
+// Promise.allSettled — waits for ALL to settle (resolve or reject)
+// Promise.race — settles on first settled promise (resolve or reject)
+// Promise.any — settles on first FULFILLED (rejects only if ALL reject)
+
+const p1 = Promise.resolve(1);
+const p2 = Promise.reject("err");
+const p3 = new Promise(r => setTimeout(() => r(3), 100));
+
+// allSettled: waits for all, returns [{status, value/reason}, ...]
+Promise.allSettled([p1, p2, p3]).then(console.log);
+// [{status:"fulfilled", value:1}, {status:"rejected", reason:"err"}, {status:"fulfilled", value:3}]
+
+// race: first settled wins (could be reject)
+Promise.race([p1, p3]).then(console.log); // 1 (p1 resolves first)
+
+// any: first fulfilled wins (ignores rejects)
+Promise.any([p2, p3]).then(console.log); // 3 (p3 fulfills)
+
+// Note: Promise.any rejects with AggregateError if ALL reject`
+  },
+  {
+    category: "Core JavaScript",
+    q: "Array.flat(), flatMap(), at() — what do they do?",
+    tags: ["popular"],
+    a: `// flat(depth) — flattens nested arrays to specified depth
+const nested = [1, [2, [3]]];
+console.log(nested.flat());       // [1, 2, [3]] (default depth = 1)
+console.log(nested.flat(2));      // [1, 2, 3]
+console.log(nested.flat(Infinity)); // [1, 2, 3]
+
+// flatMap — map + flat(1) in one pass (more efficient)
+const arr = ["hello world", "foo bar"];
+console.log(arr.flatMap(s => s.split(" "))); // ["hello", "world", "foo", "bar"]
+// Same as: arr.map(s => s.split(" ")).flat()
+
+// at(index) — access element with negative indexing support
+const nums = [10, 20, 30, 40];
+console.log(nums.at(-1));  // 40 (last element)
+console.log(nums.at(-2));  // 30 (second from last)
+// Without at: nums[nums.length - 1]`
+  },
+  {
+    category: "Core JavaScript",
+    q: "Object methods — fromEntries(), hasOwn(), entries(), values()",
+    tags: ["popular"],
+    a: `// Object.entries(obj) → [[key, value], ...]
+// Object.values(obj) → [value, ...]
+// Object.fromEntries([[key, value], ...]) → {key: value}
+// Object.hasOwn(obj, prop) → true/false (modern hasOwnProperty)
+
+const user = { name: "John", age: 30 };
+
+// entries + fromEntries:
+const entries = Object.entries(user);
+console.log(entries); // [["name","John"], ["age",30]]
+
+const back = Object.fromEntries(entries);
+console.log(back); // {name: "John", age: 30}
+
+// Handy: filter object keys
+const filtered = Object.fromEntries(
+  Object.entries(user).filter(([k]) => k !== "age")
+);
+console.log(filtered); // {name: "John"}
+
+// hasOwn — safer than hasOwnProperty (works for objects created with Object.create(null))
+console.log(Object.hasOwn(user, "name")); // true
+console.log(Object.hasOwn(user, "toString")); // false (prototype chain not checked)`
+  },
+  {
+    category: "Core JavaScript",
+    q: "Logical assignment operators (&&=, ||=, ??=)",
+    tags: ["popular", "advanced"],
+    a: `// Logical assignment combines logical operators with assignment
+// Introduced in ES2021
+
+let a = 0, b = 5, c = null;
+
+// ||= — assigns if LHS is falsy
+a ||= 10;  // a = a || 10 → a = 10 (0 is falsy)
+console.log(a); // 10
+
+// &&= — assigns if LHS is truthy
+b &&= 20;  // b = b && 20 → b = 20 (5 is truthy)
+console.log(b); // 20
+
+// ??= — assigns if LHS is null/undefined (nullish)
+c ??= 30;  // c = c ?? 30 → c = 30
+console.log(c); // 30
+
+// Practical: set defaults without overwriting valid falsy values
+let retries = 0;
+retries ||= 3;   // 0 is falsy → retries = 3 ❌ (wrong, 0 is valid)
+retries ??= 3;   // 0 is NOT nullish → retries stays 0 ✅`
+  },
+
+  // ─── NEW: CODING CHALLENGES ─────────────────────────────────────
+  {
+    category: "Coding Challenges",
+    q: "Valid Parentheses — check balanced brackets",
+    tags: ["popular", "accenture"],
+    a: `function isValid(s) {
+  const stack = [];
+  const pairs = { ")": "(", "}": "{", "]": "[" };
+
+  for (const ch of s) {
+    if (ch in pairs) {
+      if (stack.pop() !== pairs[ch]) return false;
+    } else {
+      stack.push(ch); // opening bracket
+    }
+  }
+  return stack.length === 0;
+}
+
+console.log(isValid("()[]{}")); // true
+console.log(isValid("([)]"));   // false
+console.log(isValid("({[]})")); // true
+// O(n) time, O(n) space`
+  },
+  {
+    category: "Coding Challenges",
+    q: "First non-repeating character in a string",
+    tags: ["popular", "accenture"],
+    a: `function firstNonRepeating(s) {
+  const count = {};
+
+  for (const ch of s) count[ch] = (count[ch] || 0) + 1;
+  for (let i = 0; i < s.length; i++) {
+    if (count[s[i]] === 1) return i;
+  }
+  return -1;
+}
+
+console.log(firstNonRepeating("leetcode")); // 0 (l)
+console.log(firstNonRepeating("aabb"));     // -1
+// O(n) time, O(1) space (limited charset)`
+  },
+  {
+    category: "Coding Challenges",
+    q: "Maximum subarray sum (Kadane's Algorithm)",
+    tags: ["popular", "accenture", "advanced"],
+    a: `function maxSubArray(nums) {
+  let maxSoFar = nums[0];
+  let maxEndingHere = nums[0];
+
+  for (let i = 1; i < nums.length; i++) {
+    maxEndingHere = Math.max(nums[i], maxEndingHere + nums[i]);
+    maxSoFar = Math.max(maxSoFar, maxEndingHere);
+  }
+  return maxSoFar;
+}
+
+console.log(maxSubArray([-2,1,-3,4,-1,2,1,-5,4])); // 6 (4 + -1 + 2 + 1)
+// O(n) time, O(1) space`
+  },
+  {
+    category: "Coding Challenges",
+    q: "Merge two sorted arrays",
+    tags: ["popular", "accenture"],
+    a: `function mergeSorted(arr1, arr2) {
+  const result = [];
+  let i = 0, j = 0;
+
+  while (i < arr1.length && j < arr2.length) {
+    if (arr1[i] < arr2[j]) result.push(arr1[i++]);
+    else result.push(arr2[j++]);
+  }
+
+  // Add remaining elements
+  while (i < arr1.length) result.push(arr1[i++]);
+  while (j < arr2.length) result.push(arr2[j++]);
+
+  return result;
+}
+
+console.log(mergeSorted([1, 3, 5], [2, 4, 6])); // [1, 2, 3, 4, 5, 6]
+// O(n+m) time, O(n+m) space`
+  },
+  {
+    category: "Coding Challenges",
+    q: "Check if two strings are rotations of each other",
+    tags: ["accenture"],
+    a: `function areRotations(s1, s2) {
+  if (s1.length !== s2.length) return false;
+  return (s1 + s1).includes(s2);
+}
+
+console.log(areRotations("abcde", "cdeab")); // true
+console.log(areRotations("abcde", "abced")); // false
+
+// Explanation: if s2 is a rotation of s1, then s2 will be a substring of s1+s1
+// "abcdeabcde" includes "cdeab" ✓`
+  },
+
+  // ─── NEW: OUTPUT PREDICTION ─────────────────────────────────────
+  {
+    category: "Output Prediction",
+    q: "console.log(true + false) — what prints?",
+    tags: ["accenture", "popular"],
+    a: `// Output: 1
+// true coerces to 1, false coerces to 0
+console.log(true + false); // 1
+console.log(true + true);  // 2
+console.log(false + false);// 0
+console.log(true - false); // 1`
+  },
+  {
+    category: "Output Prediction",
+    q: "console.log(!!'false' == !!'true') — what prints?",
+    tags: ["accenture", "popular"],
+    a: `// Output: true
+// !!"false" → !(!true) → !(false) → true (non-empty string is truthy)
+// !!"true"  → !(!true) → !(false) → true
+// true == true → true
+console.log(!!"false" == !!"true"); // true
+
+// Note: "false" as a STRING is truthy (only empty string "" is falsy)`
+  },
+  {
+    category: "Output Prediction",
+    q: "console.log(0 || '' || 'Hello' || undefined) — what prints?",
+    tags: ["accenture"],
+    a: `// Output: "Hello"
+// || returns the first TRUTHY value (or last falsy if all falsy)
+// 0 → falsy, "" → falsy, "Hello" → truthy → short-circuit
+console.log(0 || "" || "Hello" || undefined); // "Hello"
+
+// Opposite with &&:
+console.log(1 && "A" && null && "B"); // null (first falsy)`
+  },
+  {
+    category: "Output Prediction",
+    q: "console.log([...'hello']) — what prints?",
+    tags: ["accenture", "popular"],
+    a: `// Output: ["h", "e", "l", "l", "o"]
+// Spread operator on string iterates over characters
+console.log([..."hello"]); // ["h", "e", "l", "l", "o"]
+
+// Also works with Set, Map, NodeList, etc.
+console.log([..."😀👍"]); // ["😀", "👍"] (handles emoji correctly)
+// vs .split("") which may break with emoji`
+  },
+  {
+    category: "Output Prediction",
+    q: "console.log(3 + 4 + '5') — what prints?",
+    tags: ["accenture"],
+    a: `// Output: "75"
+// Left-to-right evaluation: 3 + 4 = 7, then 7 + "5" = "75"
+console.log(3 + 4 + "5"); // "75"
+
+// Compare:
+console.log("5" + 3 + 4); // "534" (string + number → concatenation)
+
+// To avoid: use parentheses or template literals
+console.log("" + (3 + 4) + "5"); // "75" but computed as number first`
+  },
+  {
+    category: "Output Prediction",
+    q: "console.log(Number.isNaN(NaN)) vs console.log(isNaN(NaN))",
+    tags: ["accenture"],
+    a: `// Both return true for NaN, BUT:
+console.log(Number.isNaN(NaN));  // true — strict (only true for NaN)
+console.log(isNaN(NaN));         // true — coerces first
+
+console.log(isNaN("hello"));         // true — "hello" coerces to NaN
+console.log(Number.isNaN("hello"));  // false — does NOT coerce
+
+console.log(isNaN(undefined));    // true
+console.log(Number.isNaN(undefined)); // false
+
+// Rule: use Number.isNaN() for reliable checking`
+  },
 ];
 
 // ─── UI RENDERING ─────────────────────────────────────────────
@@ -2275,6 +2575,23 @@ prevProps === nextProps (shallow)
       : tag === "system-design" ? "#e879f9" : "#94a3b8";
     btn.innerHTML = `<span class="dot" style="background:${dotColor}"></span>${tag.charAt(0).toUpperCase() + tag.slice(1)}`;
     btn.dataset.filter = tag;
+    tagFilters.appendChild(btn);
+  });
+
+  // Separator
+  const sep = document.createElement("div");
+  sep.style.cssText = "height:1px;background:var(--border);margin:4px 0;";
+  tagFilters.appendChild(sep);
+
+  // Category quick filters
+  const quickCats = ["Coding Challenges", "Output Prediction", "Advanced / Misc"];
+  quickCats.forEach(cat => {
+    const count = questions.filter(q => q.category === cat).length;
+    const btn = document.createElement("button");
+    btn.className = "cat-item";
+    const dotColor = DOT_COLORS[cat] || "#64748b";
+    btn.innerHTML = `<span class="dot" style="background:${dotColor}"></span>${cat} <span class="count">${count}</span>`;
+    btn.dataset.filter = cat;
     tagFilters.appendChild(btn);
   });
 
