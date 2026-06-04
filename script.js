@@ -2407,4 +2407,31 @@ prevProps === nextProps (shallow)
   }
 
   render();
+
+  // Mobile sidebar toggle
+  const menuToggle = document.getElementById("menuToggle");
+  const sidebar = document.getElementById("sidebar");
+  const overlay = document.getElementById("sidebarOverlay");
+
+  function closeSidebar() {
+    sidebar.classList.remove("open");
+    overlay.classList.remove("open");
+  }
+
+  if (menuToggle) {
+    menuToggle.addEventListener("click", function(e) {
+      e.stopPropagation();
+      sidebar.classList.toggle("open");
+      overlay.classList.toggle("open");
+    });
+  }
+
+  if (overlay) {
+    overlay.addEventListener("click", closeSidebar);
+  }
+
+  // Close sidebar when a filter is clicked (mobile)
+  document.querySelectorAll(".cat-item").forEach(el => {
+    el.addEventListener("click", closeSidebar);
+  });
 })();

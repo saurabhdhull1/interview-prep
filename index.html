@@ -274,15 +274,65 @@
     }
     .q-item.empty-state strong { display: block; font-size: 1.1rem; margin-bottom: 0.4rem; color: var(--text); }
 
+    /* ─── SIDEBAR OVERLAY (mobile) ─── */
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 98;
+      backdrop-filter: blur(4px);
+    }
+    .sidebar-overlay.open { display: block; }
+
+    /* ─── MOBILE HAMBURGER ─── */
+    .menu-toggle {
+      display: none;
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 1.3rem;
+      padding: 0.3rem 0.6rem;
+      border-radius: 6px;
+      cursor: pointer;
+      line-height: 1;
+    }
+    .menu-toggle:hover { border-color: var(--accent); color: var(--accent); }
+
     /* ─── RESPONSIVE ─── */
     @media (max-width: 768px) {
-      .sidebar { display: none; }
-      .main { padding: 1.2rem; }
-      .header { flex-direction: column; align-items: flex-start; }
+      .menu-toggle { display: inline-flex; align-items: center; }
+      .sidebar {
+        position: fixed;
+        left: -280px;
+        top: 0;
+        bottom: 0;
+        z-index: 99;
+        width: 260px;
+        min-width: auto;
+        transition: left 0.3s ease;
+        display: flex;
+        border-right: 1px solid var(--border);
+        box-shadow: 4px 0 20px rgba(0,0,0,0.4);
+      }
+      .sidebar.open { left: 0; }
+      .main { padding: 1rem; }
+      .header {
+        flex-direction: row;
+        align-items: center;
+        flex-wrap: nowrap;
+        gap: 0.5rem;
+      }
+      .header h1 { font-size: 1.1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .header .stats { font-size: 0.7rem; padding: 0.25rem 0.6rem; flex-shrink: 0; }
+      .sidebar .search-box { font-size: 16px; } /* prevent iOS zoom */
     }
   </style>
 </head>
 <body>
+
+  <!-- SIDEBAR OVERLAY (mobile) -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
   <!-- SIDEBAR -->
   <aside class="sidebar" id="sidebar">
@@ -291,7 +341,7 @@
       <small>Saurabh Dhull — Custom Software Engineer</small>
     </div>
 
-    <input class="search-box" id="search" placeholder="Search questions..." autofocus>
+    <input class="search-box" id="search" placeholder="Search questions...">
 
     <div>
       <div class="section-label">Quick Filters</div>
@@ -311,7 +361,8 @@
   <!-- MAIN -->
   <main class="main">
     <div class="header">
-      <h1>JavaScript Interview Questions</h1>
+      <button class="menu-toggle" id="menuToggle" aria-label="Toggle sidebar">&#9776;</button>
+      <h1>JS Interview Prep</h1>
       <span class="stats" id="stats">Showing 0 of 0</span>
     </div>
 
