@@ -2522,9 +2522,689 @@ console.log(Number.isNaN(undefined)); // false
 
 // Rule: use Number.isNaN() for reliable checking`
   },
-];
 
-// ─── UI RENDERING ─────────────────────────────────────────────
+  // ─── NAMASTE JAVASCRIPT — Akshay Saini ─────────────────────────
+  // Season 1: JS Fundamentals
+  {
+    category: "Namaste JS",
+    q: "How does Execution Context work in JavaScript?",
+    tags: ["namaste-js", "season1", "popular"],
+    a: `// Execution Context = environment where JS code is evaluated
+// Two phases: Creation Phase + Execution Phase
+
+// Global Execution Context (GEC) is created when JS starts:
+// 1. Creation Phase:
+//    - Global object (window) created
+//    - 'this' = window
+//    - Variables hoisted with undefined
+//    - Function declarations stored in memory
+
+// 2. Execution Phase:
+//    - Code runs line by line
+//    - Values assigned to variables
+//    - Functions create their own Execution Context when invoked
+
+// Call Stack manages ECs (LIFO):
+// [global EC] → [foo() EC] → [bar() EC] → ... pops when done
+
+console.log(a); // undefined (hoisted in creation phase)
+var a = 10;
+console.log(a); // 10
+
+// Each function call gets its own EC with:
+// - Variable Environment (local memory)
+// - Lexical Environment (scope chain reference)`
+  },
+  {
+    category: "Namaste JS",
+    q: "Hoisting — what gets hoisted and what doesn't?",
+    tags: ["namaste-js", "season1", "popular"],
+    a: `// Hoisting = variables/functions are moved to top of their scope during creation phase
+
+// 1. var — hoisted with default value undefined
+console.log(x); // undefined
+var x = 5;
+
+// 2. function declaration — fully hoisted (definition stored)
+sayHi(); // "Hi!"
+function sayHi() { console.log("Hi!"); }
+
+// 3. let / const — hoisted but NOT initialized (Temporal Dead Zone)
+// console.log(y); // ReferenceError: Cannot access before initialization
+let y = 10;
+
+// 4. function expression — NOT hoisted (treated as variable)
+// greet(); // TypeError: greet is not a function
+var greet = function() { console.log("Hey"); };
+
+// 5. Arrow functions — follow same hoisting rules as variable
+// console.log(typeof add); // undefined (var) or ReferenceError (let/const)
+const add = (a, b) => a + b;
+
+// Key takeaway: only var declarations and function declarations are usable before definition`
+  },
+  {
+    category: "Namaste JS",
+    q: "Scope Chain and Lexical Environment — explain",
+    tags: ["namaste-js", "season1", "popular"],
+    a: `// Lexical Environment = Local Memory + Lexical Parent Reference
+// Scope Chain = chain of Lexical Environments
+
+// A function has access to:
+// - Its own variables
+// - Its parent function's variables
+// - Global variables
+// This is possible through the scope chain
+
+function outer() {
+  const a = 10;
+
+  function inner() {
+    const b = 20;
+    console.log(a + b); // 30 — inner can access 'a' from outer
+  }
+
+  // console.log(b); // ReferenceError — b is not in outer's scope
+  inner();
+}
+
+outer();
+
+// Scope chain resolution:
+// inner's scope → outer's scope → global scope
+// JS looks up the chain until found or throws ReferenceError
+
+// Lexical Parent = where the function is physically defined (NOT where it's called)`
+  },
+  {
+    category: "Namaste JS",
+    q: "Block Scope and Shadowing in JavaScript",
+    tags: ["namaste-js", "season1"],
+    a: `// Block = { } — creates scope for let/const (NOT for var)
+
+{
+  var a = 10;   // scoped to function/global (NOT block)
+  let b = 20;   // block scoped
+  const c = 30; // block scoped
+}
+console.log(a); // 10 — accessible outside block
+// console.log(b); // ReferenceError: b is not defined
+
+// Shadowing — inner variable with same name as outer
+let x = 100;   // script scope
+{
+  let x = 200; // block scope — shadows outer x
+  console.log(x); // 200
+}
+console.log(x); // 100
+
+// var shadowing (different rules — crosses scope boundaries):
+var y = 50;
+{
+  var y = 60; // same as redeclaring — affects outer y
+}
+console.log(y); // 60 — var ignores block scope
+
+// Illegal shadowing — let in outer, var in inner throws error`
+  },
+  {
+    category: "Namaste JS",
+    q: "Closures in depth — what, why, practical use cases",
+    tags: ["namaste-js", "season1", "popular"],
+    a: `// Closure = function bundled with its lexical environment
+// Even after outer function returns, inner function "remembers" outer variables
+
+function createCounter() {
+  let count = 0;  // this variable persists in closure
+  return function() {
+    count++;
+    return count;
+  };
+}
+
+const counter = createCounter();
+console.log(counter()); // 1
+console.log(counter()); // 2
+console.log(counter()); // 3
+
+// Practical uses:
+// 1. Data privacy / encapsulation
+// 2. Module pattern
+// 3. Function factories (currying)
+// 4. Memoization
+// 5. setTimeout loops (IIFE fix)
+
+// Common interview question:
+for (var i = 1; i <= 3; i++) {
+  setTimeout(function() { console.log(i); }, i * 1000);
+}
+// Output: 4, 4, 4 (all share same 'i' from closure)
+
+// Fix with closure (IIFE):
+for (var i = 1; i <= 3; i++) {
+  (function(j) {
+    setTimeout(function() { console.log(j); }, j * 1000);
+  })(i);
+}
+// Output: 1, 2, 3`
+  },
+  {
+    category: "Namaste JS",
+    q: "Function Statement vs Expression vs Declaration",
+    tags: ["namaste-js", "season1"],
+    a: `// Function Statement (Declaration) — hoisted
+function greet() {
+  console.log("Hello");
+}
+// Can be called before declaration due to hoisting
+
+// Function Expression — stored in variable, NOT hoisted
+const greet2 = function() {
+  console.log("Hi");
+};
+// greet2 is hoisted (var/let) but function assigned is NOT available yet
+
+// Anonymous Function — function without a name
+const add = function(a, b) { return a + b; };
+// Used as: callback, IIFE, higher-order functions
+
+// Named Function Expression
+const factorial = function fact(n) {
+  return n <= 1 ? 1 : n * fact(n - 1); // named ref for recursion
+};
+// 'fact' is only accessible inside the function body
+
+// First Class Functions — functions can be:
+// 1. Assigned to variables
+// 2. Passed as arguments to other functions
+// 3. Returned from other functions
+// JS treats functions as first-class citizens`
+  },
+  {
+    category: "Namaste JS",
+    q: "First Class Functions and Callback Functions",
+    tags: ["namaste-js", "season1", "popular"],
+    a: `// First Class Functions = functions treated as values
+// 1. Assign to variable:
+const fn = function() { console.log("assigned"); };
+
+// 2. Pass as argument (Callback):
+function process(arr, callback) {
+  for (let i = 0; i < arr.length; i++) {
+    callback(arr[i]);
+  }
+}
+process([1, 2, 3], console.log);
+
+// 3. Return from function (Higher-Order Function):
+function multiplyBy(factor) {
+  return function(number) {
+    return number * factor;
+  };
+}
+const double = multiplyBy(2);
+console.log(double(5)); // 10
+
+// Callback function = function passed to another function
+// Synchronous callbacks: forEach, map, filter
+// Asynchronous callbacks: setTimeout, event handlers, fetch
+
+// The callback queue stores async callbacks
+// Event loop moves them to call stack when it's empty`
+  },
+  {
+    category: "Namaste JS",
+    q: "Event Loop — the complete picture",
+    tags: ["namaste-js", "season1", "popular"],
+    a: `// JS is single-threaded, non-blocking via Event Loop
+// Components: Call Stack, Web APIs, Callback Queue, Microtask Queue
+
+// 1. Call Stack — executes synchronous code (LIFO)
+// 2. Web APIs — browser provides (DOM, setTimeout, fetch, etc.)
+// 3. Callback/Task Queue — macrotasks (setTimeout, setInterval, DOM events)
+// 4. Microtask Queue — higher priority (Promise.then, MutationObserver)
+
+// Execution order:
+// 1. Execute all synchronous code (clear call stack)
+// 2. Run ALL microtasks (Promise callbacks)
+// 3. Pick ONE macrotask from callback queue
+// 4. Repeat (event loop cycles)
+
+console.log("1");                        // sync
+setTimeout(() => console.log("2"), 0);    // macrotask
+Promise.resolve().then(() => console.log("3")); // microtask
+console.log("4");                        // sync
+
+// Output: 1, 4, 3, 2
+// Why: sync(1,4) → microtask(3) → macrotask(2)`
+  },
+  {
+    category: "Namaste JS",
+    q: "setTimeout — trust issues and how it works",
+    tags: ["namaste-js", "season1"],
+    a: `// setTimeout doesn't guarantee exact delay — it guarantees MINIMUM delay
+// It waits for the call stack to be empty + callback queue to reach it
+
+// Trust issue 1: Timer starts AFTER current execution
+console.log("start");
+setTimeout(() => console.log("timeout"), 0);
+// Even with 0ms, it's queued — runs after all sync code
+let i = 0;
+while (i < 1000000000) i++; // blocks for ~1s
+console.log("end");
+// Output: start, end, timeout (timeout waits for while loop!)
+
+// Trust issue 2: Nested setTimeout minimum delay
+// HTML spec: nested timeouts >= 4ms (after 5 levels)
+
+// Trust issue 3: setTimeout with closures
+for (var i = 1; i <= 3; i++) {
+  setTimeout(function() { console.log(i); }, i * 1000);
+}
+// Output: 4, 4, 4 — all see the same 'i'
+// Fix: use let (block scoped) or IIFE closure`
+  },
+  {
+    category: "Namaste JS",
+    q: "Promises and Async/Await in depth",
+    tags: ["namaste-js", "season1", "popular"],
+    a: `// Promise = object representing eventual completion/failure of async operation
+// States: pending → fulfilled / rejected
+
+const promise = new Promise((resolve, reject) => {
+  setTimeout(() => resolve("Data loaded"), 1000);
+});
+
+promise
+  .then(data => console.log(data))   // "Data loaded"
+  .catch(err => console.error(err))
+  .finally(() => console.log("Done"));
+
+// Promise chaining:
+fetch("/api/user")
+  .then(res => res.json())
+  .then(user => fetch("/api/orders/" + user.id))
+  .then(res => res.json())
+  .then(orders => console.log(orders))
+  .catch(err => console.error("Any failure in chain", err));
+
+// Async/Await — syntactic sugar over Promises
+async function getOrders() {
+  try {
+    const res = await fetch("/api/user");
+    const user = await res.json();
+    const ordersRes = await fetch("/api/orders/" + user.id);
+    const orders = await ordersRes.json();
+    return orders;
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+// await can only be used inside async function
+// async function always returns a Promise`
+  },
+  {
+    category: "Namaste JS",
+    q: "'this' keyword in different contexts",
+    tags: ["namaste-js", "season1", "popular"],
+    a: `// 'this' depends on HOW a function is called (execution context)
+
+// 1. Global space → window/global
+console.log(this); // window (browser)
+
+// 2. Regular function → window (undefined in strict mode)
+function show() { console.log(this); }
+show(); // window | undefined (strict)
+
+// 3. Object method → the object
+const obj = {
+  name: "JS",
+  show() { console.log(this.name); }
+};
+obj.show(); // "JS"
+
+// 4. Arrow function → inherits from parent scope (lexical this)
+const obj2 = {
+  name: "Test",
+  show: () => console.log(this.name) // this = window, NOT obj2
+};
+
+// 5. Event handler → the element that fired the event
+button.addEventListener("click", function() {
+  console.log(this); // button element
+});
+
+// 6. Constructor → the new instance
+function Person(n) { this.name = n; }
+const p = new Person("John");
+console.log(p.name); // "John"`
+  },
+  {
+    category: "Namaste JS",
+    q: "call, apply, bind — detailed explanation",
+    tags: ["namaste-js", "season1", "popular"],
+    a: `// All three explicitly set 'this' — key differences:
+
+// call(thisArg, arg1, arg2, ...) — invoked immediately, args passed individually
+function greet(greeting) {
+  return greeting + ", " + this.name;
+}
+const user = { name: "John" };
+console.log(greet.call(user, "Hello")); // "Hello, John"
+
+// apply(thisArg, [argsArray]) — invoked immediately, args as array
+console.log(greet.apply(user, ["Hi"])); // "Hi, John"
+
+// bind(thisArg, arg1, ...) — returns NEW function with bound 'this'
+const boundGreet = greet.bind(user, "Hey");
+console.log(boundGreet()); // "Hey, John"
+// bind is NOT invoked immediately — useful for callbacks, event handlers
+
+// Practical: borrowing methods
+const arr = [1, 2, 3];
+const max = Math.max.apply(null, arr); // old way
+const max2 = Math.max(...arr);         // modern way
+
+// Polyfill of bind:
+Function.prototype.myBind = function(context, ...args) {
+  const fn = this;
+  return function(...moreArgs) {
+    return fn.apply(context, [...args, ...moreArgs]);
+  };
+};`
+  },
+  {
+    category: "Namaste JS",
+    q: "Prototypal Inheritance and Prototype Chain",
+    tags: ["namaste-js", "season1", "advanced"],
+    a: `// Every JS object has a hidden [[Prototype]] (accessible via __proto__)
+// When accessing a property, JS walks the prototype chain until found or null
+
+const animal = { eats: true };
+const rabbit = { jumps: true };
+
+rabbit.__proto__ = animal; // set prototype
+
+console.log(rabbit.jumps); // true (own)
+console.log(rabbit.eats);  // true (inherited from animal)
+
+// Constructor functions:
+function Person(name) {
+  this.name = name;
+}
+Person.prototype.sayHello = function() {
+  return "Hi, I'm " + this.name;
+};
+
+const john = new Person("John");
+console.log(john.sayHello()); // "Hi, I'm John"
+
+// What happens with 'new' keyword:
+// 1. New empty object created {}
+// 2. [[Prototype]] linked to Person.prototype
+// 3. 'this' points to new object
+// 4. Returns the object (if function doesn't return object)
+
+// Prototype chain:
+// john → Person.prototype → Object.prototype → null
+console.log(john.__proto__ === Person.prototype);       // true
+console.log(Person.prototype.__proto__ === Object.prototype); // true
+console.log(Object.prototype.__proto__);                // null`
+  },
+  {
+    category: "Namaste JS",
+    q: "Higher-Order Functions — map, filter, reduce",
+    tags: ["namaste-js", "season2", "popular"],
+    a: `// Higher-Order Functions = functions that take/return other functions
+// Named after the Closure/Frist-class concepts
+
+const nums = [1, 2, 3, 4, 5];
+
+// map — transform each element
+const doubled = nums.map(n => n * 2);  // [2, 4, 6, 8, 10]
+
+// filter — keep elements passing a test
+const evens = nums.filter(n => n % 2 === 0); // [2, 4]
+
+// reduce — accumulate into a single value
+const sum = nums.reduce((acc, n) => acc + n, 0); // 15
+
+// Chaining:
+const result = nums
+  .filter(n => n > 2)
+  .map(n => n * 10)
+  .reduce((a, b) => a + b, 0);
+console.log(result); // (3+4+5)*10 = 120
+
+// Polyfill for map:
+Array.prototype.myMap = function(callback) {
+  const result = [];
+  for (let i = 0; i < this.length; i++) {
+    result.push(callback(this[i], i, this));
+  }
+  return result;
+};`
+  },
+  {
+    category: "Namaste JS",
+    q: "Debouncing and Throttling — implementation",
+    tags: ["namaste-js", "season2", "popular"],
+    a: `// DEBOUNCE — fires AFTER user stops triggering for N ms
+// Use: search input, auto-save, resize handler
+
+function debounce(fn, delay) {
+  let timer;
+  return function(...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn.apply(this, args), delay);
+  };
+}
+// Usage: const debouncedSearch = debounce(searchAPI, 500);
+
+// THROTTLE — fires at most ONCE every N ms
+// Use: scroll handler, mousemove, game loop
+
+function throttle(fn, limit) {
+  let inThrottle = false;
+  return function(...args) {
+    if (!inThrottle) {
+      fn.apply(this, args);
+      inThrottle = true;
+      setTimeout(() => inThrottle = false, limit);
+    }
+  };
+}
+// Usage: const throttledScroll = throttle(handleScroll, 200);
+
+// Key difference:
+// Debounce: "wait until pause" — good for API calls while typing
+// Throttle: "pace the execution" — good for scroll position tracking`
+  },
+  {
+    category: "Namaste JS",
+    q: "Currying in JavaScript",
+    tags: ["namaste-js", "season2", "advanced"],
+    a: `// Currying = transforming f(a, b, c) → f(a)(b)(c)
+// Uses closures to remember arguments
+
+// Manual currying:
+function multiply(a) {
+  return function(b) {
+    return a * b;
+  };
+}
+const double = multiply(2);
+console.log(double(5)); // 10
+
+// Arrow syntax:
+const curry = (a) => (b) => (c) => a + b + c;
+console.log(curry(1)(2)(3)); // 6
+
+// Currying with bind:
+function sum(a, b, c) { return a + b + c; }
+const add5 = sum.bind(null, 5);
+const add5And3 = add5.bind(null, 3);
+console.log(add5And3(2)); // 10
+
+// Practical uses:
+// 1. Partially apply functions for reuse
+// 2. Create specialized functions from general ones
+// 3. Event handlers with custom data
+
+// Infinite currying — sum(1)(2)(3)...()
+function infiniteSum(a) {
+  return function(b) {
+    if (b !== undefined) return infiniteSum(a + b);
+    return a;
+  };
+}
+console.log(infiniteSum(1)(2)(3)(4)()); // 10`
+  },
+  {
+    category: "Namaste JS",
+    q: "Polyfills — writing your own bind, map, filter, reduce",
+    tags: ["namaste-js", "season2", "popular"],
+    a: `// Polyfill for Function.prototype.bind:
+Function.prototype.myBind = function(context, ...args) {
+  const fn = this;
+  return function(...moreArgs) {
+    return fn.apply(context, [...args, ...moreArgs]);
+  };
+};
+
+// Polyfill for Array.prototype.map:
+Array.prototype.myMap = function(callback) {
+  const result = [];
+  for (let i = 0; i < this.length; i++) {
+    result.push(callback(this[i], i, this));
+  }
+  return result;
+};
+
+// Polyfill for Array.prototype.filter:
+Array.prototype.myFilter = function(callback) {
+  const result = [];
+  for (let i = 0; i < this.length; i++) {
+    if (callback(this[i], i, this)) result.push(this[i]);
+  }
+  return result;
+};
+
+// Polyfill for Array.prototype.reduce:
+Array.prototype.myReduce = function(callback, initialValue) {
+  let accumulator = initialValue;
+  let startIndex = 0;
+  if (arguments.length < 2) {
+    accumulator = this[0];
+    startIndex = 1;
+  }
+  for (let i = startIndex; i < this.length; i++) {
+    accumulator = callback(accumulator, this[i], i, this);
+  }
+  return accumulator;
+};`
+  },
+  {
+    category: "Namaste JS",
+    q: "Error Handling — try/catch/finally, custom errors",
+    tags: ["namaste-js", "season2"],
+    a: `// try — wrap risky code
+// catch — handle error
+// finally — ALWAYS runs (cleanup)
+
+try {
+  let result = riskyOperation();
+  console.log(result);
+} catch (error) {
+  console.error("Something went wrong:", error.message);
+} finally {
+  console.log("Cleanup — always runs");
+}
+
+// Custom errors:
+class NetworkError extends Error {
+  constructor(message, statusCode) {
+    super(message);
+    this.name = "NetworkError";
+    this.statusCode = statusCode;
+  }
+}
+
+function fetchData() {
+  throw new NetworkError("Server unreachable", 503);
+}
+
+try {
+  fetchData();
+} catch (err) {
+  if (err instanceof NetworkError) {
+    console.log(\`Network issue: \${err.statusCode} - \${err.message}\`);
+  } else {
+    throw err; // rethrow unknown errors
+  }
+}
+
+// Async error handling with async/await:
+async function getData() {
+  try {
+    const res = await fetch("/api/data");
+    if (!res.ok) throw new NetworkError("Bad response", res.status);
+    return await res.json();
+  } catch (err) {
+    console.error("Fetch failed:", err);
+    return null;
+  }
+}`
+  },
+  {
+    category: "Namaste JS",
+    q: "Generator Functions and Iterators",
+    tags: ["namaste-js", "season2", "advanced"],
+    a: `// Generator = function that CAN be paused/resumed with yield
+// Returns an iterator with .next() and .return() methods
+
+function* numberGenerator() {
+  yield 1;
+  yield 2;
+  yield 3;
+}
+
+const gen = numberGenerator();
+console.log(gen.next()); // { value: 1, done: false }
+console.log(gen.next()); // { value: 2, done: false }
+console.log(gen.next()); // { value: 3, done: false }
+console.log(gen.next()); // { value: undefined, done: true }
+
+// Infinite generator:
+function* idMaker() {
+  let id = 0;
+  while (true) yield id++;
+}
+
+const ids = idMaker();
+console.log(ids.next().value); // 0
+console.log(ids.next().value); // 1
+
+// Use cases:
+// 1. Custom iterators
+// 2. Infinite sequences
+// 3. Async generators (redux-saga)
+// 4. Lazy evaluation
+
+// Generator with async (simplifies async code):
+async function* fetchPages(urls) {
+  for (const url of urls) {
+    yield await fetch(url).then(r => r.json());
+  }
+}
+
+// for await...of consumes async generators
+for await (const page of fetchPages(["/api/1", "/api/2"])) {
+  console.log(page);
+}`
+  },
+];
 (function() {
   const container = document.getElementById("questions-container");
   const searchInput = document.getElementById("search");
@@ -2551,7 +3231,8 @@ console.log(Number.isNaN(undefined)); // false
     "Coding Challenges": "#facc15",
     "Output Prediction": "#fb923c",
     "HR & General": "#94a3b8",
-    "Advanced / Misc": "#a5b4fc"
+    "Advanced / Misc": "#a5b4fc",
+    "Namaste JS": "#fbbf24"
   };
 
   let activeFilter = "all";
@@ -2652,7 +3333,7 @@ console.log(Number.isNaN(undefined)); // false
     });
 
     stats.textContent = `Showing ${filtered.length} of ${questions.length}`;
-    totalStats.textContent = `${questions.length} questions`;
+    document.getElementById("totalStats").textContent = `${questions.length} questions`;
 
     let html = "";
     const categoryOrder = categories.filter(c => grouped[c]);
@@ -2686,15 +3367,127 @@ console.log(Number.isNaN(undefined)); // false
       html += "</div>";
     });
 
-    container.innerHTML = html;
-
-    container.querySelectorAll(".question").forEach(el => {
-      el.addEventListener("click", function() {
-        const item = this.parentElement;
-        item.classList.toggle("open");
+    if (!quizMode) {
+      container.innerHTML = html;
+      container.querySelectorAll(".question").forEach(el => {
+        el.addEventListener("click", function() {
+          const item = this.parentElement;
+          item.classList.toggle("open");
+        });
       });
+    }
+  }
+
+  function formatAnswer(a) {
+    return a.split("\n").map(line => {
+      const t = line.trim();
+      if (t.startsWith("//")) return `<span class="comment">${line}</span>`;
+      return line;
+    }).join("\n");
+  }
+
+  // ─── QUIZ MODE ───
+  let quizMode = false;
+  let quizIndex = 0;
+  let quizQuestions = [];
+
+  const startQuizBtn = document.getElementById("startQuizBtn");
+  const exitQuizBtn = document.getElementById("exitQuizBtn");
+  const quizView = document.getElementById("quizView");
+  const quizQuestionText = document.getElementById("quizQuestionText");
+  const quizAnswer = document.getElementById("quizAnswer");
+  const quizProgress = document.getElementById("quizProgress");
+  const quizCategory = document.getElementById("quizCategory");
+  const prevBtn = document.getElementById("prevBtn");
+  const nextBtn = document.getElementById("nextBtn");
+
+  function getFilteredQuestions() {
+    return questions.filter(q => {
+      if (activeFilter !== "all") {
+        if (q.category === activeFilter) return true;
+        if (q.tags && q.tags.includes(activeFilter)) return true;
+        return false;
+      }
+      return true;
+    }).filter(q => {
+      if (!searchTerm) return true;
+      return q.q.toLowerCase().includes(searchTerm) ||
+             q.a.toLowerCase().includes(searchTerm) ||
+             q.category.toLowerCase().includes(searchTerm);
     });
   }
+
+  function startQuiz() {
+    quizQuestions = getFilteredQuestions();
+    if (quizQuestions.length === 0) return;
+    quizMode = true;
+    quizIndex = 0;
+    container.style.display = "none";
+    quizView.style.display = "block";
+    showQuizQuestion();
+  }
+
+  function exitQuiz() {
+    quizMode = false;
+    quizView.style.display = "none";
+    container.style.display = "block";
+  }
+
+  function showQuizQuestion() {
+    const q = quizQuestions[quizIndex];
+    quizQuestionText.innerHTML = q.q;
+    quizAnswer.innerHTML = `<pre>${formatAnswer(q.a)}</pre>`;
+    quizProgress.textContent = `${quizIndex + 1} / ${quizQuestions.length}`;
+    quizCategory.textContent = q.category;
+    prevBtn.disabled = quizIndex === 0;
+    nextBtn.textContent = quizIndex === quizQuestions.length - 1 ? "Finish" : "Next \u2192";
+    prevBtn.style.opacity = quizIndex === 0 ? "0.4" : "1";
+  }
+
+  if (startQuizBtn) {
+    startQuizBtn.addEventListener("click", startQuiz);
+  }
+
+  if (exitQuizBtn) {
+    exitQuizBtn.addEventListener("click", exitQuiz);
+  }
+
+  if (prevBtn) {
+    prevBtn.addEventListener("click", function() {
+      if (quizIndex > 0) { quizIndex--; showQuizQuestion(); }
+    });
+  }
+
+  if (nextBtn) {
+    nextBtn.addEventListener("click", function() {
+      if (quizIndex < quizQuestions.length - 1) {
+        quizIndex++;
+        showQuizQuestion();
+      } else {
+        exitQuiz();
+      }
+    });
+  }
+
+  // Keyboard shortcuts
+  document.addEventListener("keydown", function(e) {
+    if (!quizMode) return;
+    if (e.key === "ArrowRight") nextBtn.click();
+    if (e.key === "ArrowLeft") prevBtn.click();
+    if (e.key === "Escape") exitQuiz();
+  });
+
+  // Re-bind start quiz when filters change
+  const origApplyFilter = applyFilter;
+  applyFilter = function(filter) {
+    origApplyFilter(filter);
+    if (quizMode) {
+      quizQuestions = getFilteredQuestions();
+      quizIndex = 0;
+      if (quizQuestions.length > 0) showQuizQuestion();
+      else exitQuiz();
+    }
+  };
 
   render();
 
@@ -2720,7 +3513,6 @@ console.log(Number.isNaN(undefined)); // false
     overlay.addEventListener("click", closeSidebar);
   }
 
-  // Close sidebar when a filter is clicked (mobile)
   document.querySelectorAll(".cat-item").forEach(el => {
     el.addEventListener("click", closeSidebar);
   });

@@ -247,6 +247,9 @@
     .badge.react { background: rgba(56,189,248,0.15); color: #7dd3fc; }
     .badge.node { background: rgba(74,222,128,0.15); color: #86efac; }
     .badge.system-design { background: rgba(232,121,249,0.15); color: #f0abfc; }
+    .badge.namaste-js { background: rgba(251,191,36,0.2); color: #fbbf24; }
+    .badge.season1 { background: rgba(248,113,113,0.15); color: #fca5a5; }
+    .badge.season2 { background: rgba(52,211,153,0.15); color: #6ee7b7; }
 
     .q-item.empty-state {
       text-align: center;
@@ -279,6 +282,13 @@
       line-height: 1;
     }
     .menu-toggle:hover { border-color: var(--accent); color: var(--accent); }
+    .tag-btn {
+      padding: 0.35rem 1rem; border-radius: 20px;
+      border: 1px solid var(--border); background: var(--surface);
+      color: var(--text2); font-size: 0.78rem; cursor: pointer; transition: all 0.15s;
+    }
+    .tag-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .tag-btn.active { background: var(--accent); color: var(--bg); border-color: var(--accent); font-weight: 600; }
 
     /* ─── RESPONSIVE ─── */
     @media (max-width: 768px) {
@@ -305,8 +315,7 @@
         gap: 0.5rem;
       }
       .header h1 { font-size: 1.1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-      .header .stats { font-size: 0.7rem; padding: 0.25rem 0.6rem; flex-shrink: 0; }
-      .sidebar .search-box { font-size: 16px; } /* prevent iOS zoom */
+      .sidebar .search-box { font-size: 16px; }
     }
   </style>
 </head>
@@ -320,6 +329,10 @@
     <div class="logo">
       Interview Prep
       <small>Saurabh Dhull — Custom Software Engineer</small>
+    </div>
+
+    <div style="text-align:center;padding:0.4rem;background:var(--surface2);border-radius:8px;font-size:0.82rem;color:var(--text2);">
+      <span id="stats">0 questions</span>
     </div>
 
     <input class="search-box" id="search" placeholder="Search questions...">
@@ -344,10 +357,34 @@
     <div class="header">
       <button class="menu-toggle" id="menuToggle" aria-label="Toggle sidebar">&#9776;</button>
       <h1>JS Interview Prep</h1>
-      <span class="stats" id="stats">Showing 0 of 0</span>
+      <button class="tag-btn" id="startQuizBtn" style="font-size:0.82rem;padding:0.4rem 1.2rem;border-radius:8px;background:var(--accent);color:var(--bg);border:none;cursor:pointer;font-weight:600;white-space:nowrap;">&#9654; Start Quiz</button>
     </div>
 
+    <!-- LIST VIEW -->
     <div id="questions-container"></div>
+
+    <!-- QUIZ VIEW (hidden by default) -->
+    <div id="quizView" style="display:none;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:0.5rem;">
+        <div style="display:flex;align-items:center;gap:0.6rem;">
+          <span id="quizProgress" style="font-size:0.85rem;color:var(--text2);"></span>
+          <span id="quizCategory" style="font-size:0.7rem;background:var(--surface2);padding:0.2rem 0.6rem;border-radius:10px;color:var(--gold);"></span>
+        </div>
+        <button id="exitQuizBtn" class="tag-btn" style="font-size:0.78rem;padding:0.25rem 0.8rem;">&times; Back to List</button>
+      </div>
+
+      <div class="q-item open" id="quizCard">
+        <div class="question" id="quizQuestion" style="cursor:default;">
+          <span id="quizQuestionText"></span>
+        </div>
+        <div class="answer" id="quizAnswer" style="display:block;"></div>
+      </div>
+
+      <div style="display:flex;justify-content:center;gap:1rem;margin-top:1.5rem;">
+        <button id="prevBtn" class="tag-btn" style="padding:0.5rem 1.5rem;">&larr; Previous</button>
+        <button id="nextBtn" class="tag-btn" style="padding:0.5rem 1.5rem;">Next &rarr;</button>
+      </div>
+    </div>
   </main>
 
   <script src="script.js"></script>
