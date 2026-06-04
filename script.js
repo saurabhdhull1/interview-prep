@@ -9,122 +9,121 @@ const questions = [
   // ─── CORE JAVASCRIPT ────────────────────────────────────────
   {
     category: "Core JavaScript",
-    q: "var vs let vs const — explain differences",
+    q: "var vs let vs const — key differences?",
     tags: ["popular"],
-    a: `// Scope: var is function-scoped; let/const are block-scoped
-// Hoisting: var is hoisted (initialized as undefined); let/const are hoisted but NOT initialized (TDZ)
-// Re-declaration: var allows re-declaration; let/const do not
-// Re-assignment: const cannot be reassigned (but object properties can mutate)
+    a: `// var → function-scoped, hoisted with undefined, can redeclare
+// let/const → block-scoped, hoisted but uninitialized (TDZ), no redeclare
+// const → cannot reassign, but object properties can mutate
 
-console.log(x); // undefined (hoisted)
 var x = 5;
+console.log(x); // 5
 
-console.log(y); // ReferenceError: Cannot access before initialization (TDZ)
 let y = 5;
+console.log(y); // 5 (TDZ applies before this line)
 
 const z = { name: "John" };
-z.name = "Doe"; // Allowed — const only prevents reassignment, not mutation`
+z.name = "Doe"; // allowed — const only blocks reassignment, not mutation`
   },
   {
     category: "Core JavaScript",
     q: "== vs === — how do they differ?",
     tags: ["popular"],
-    a: `// ==  — loose equality (coerces types before comparing)
-// === — strict equality (no type coercion)
+    a: `// == loose equality — coerces types before comparing
+// === strict equality — no type coercion, preferred
 
-console.log(5 == "5");   // true  (string "5" coerced to number 5)
-console.log(5 === "5");  // false (number !== string)
+console.log(5 == "5");   // true  ("5" coerced to number)
+console.log(5 === "5");  // false
 
-console.log(null == undefined);  // true  (special rule)
+console.log(null == undefined);  // true  (special JS rule)
 console.log(null === undefined); // false
 
 console.log(false == 0);  // true
 console.log(false === 0); // false
 
-// Rule: always prefer === unless you explicitly need coercion`
+// Always use === unless you explicitly need coercion`
   },
   {
     category: "Core JavaScript",
-    q: "What is hoisting?",
+    q: "What is hoisting in JavaScript?",
     tags: ["popular"],
-    a: `// Hoisting = JS moves declarations to the top of their scope during compilation
-// var declarations are hoisted and initialized as undefined
-// let/const are hoisted but NOT initialized (Temporal Dead Zone)
+    a: `// Hoisting = declarations moved to top of scope during compilation
+// var → hoisted + initialized as undefined
+// let/const → hoisted but uninitialized (TDZ)
+// function declarations → fully hoisted (callable before definition)
 
-console.log(a); // undefined (hoisted but not yet assigned)
+console.log(a); // undefined
 var a = 10;
 
-foo(); // "Hello" — function declarations are fully hoisted
+foo(); // "Hello" — function declaration fully hoisted
 function foo() { console.log("Hello"); }
 
-bar(); // TypeError: bar is not a function — var bar is hoisted as undefined
+bar(); // TypeError — var bar hoisted as undefined, not a function yet
 var bar = function() { console.log("Hi"); };`
   },
   {
     category: "Core JavaScript",
-    q: "Temporal Dead Zone (TDZ) — what is it?",
+    q: "What is the Temporal Dead Zone (TDZ)?",
     tags: ["advanced"],
-    a: `// TDZ = the time between entering scope and variable declaration
-// During TDZ, accessing let/const throws ReferenceError
+    a: `// TDZ = period between entering scope and variable declaration
+// Accessing let/const during TDZ throws ReferenceError
 
 {
-  // TDZ starts here for x
+  // TDZ starts here
   console.log(x); // ReferenceError
   let x = 10;     // TDZ ends here
 }
 
-// typeof operator is also unsafe in TDZ
-typeof y; // ReferenceError (let y) — unlike var where typeof is safe`
+// typeof also unsafe in TDZ with let/const
+typeof y; // ReferenceError (unlike var where typeof returns "undefined")`
   },
   {
     category: "Core JavaScript",
-    q: "What are closures? Give an example.",
+    q: "What are closures — explain with example",
     tags: ["popular"],
-    a: `// Closure = function "remembers" its lexical scope even when executed outside it
-// Inner function has access to outer function's variables
+    a: `// Closure = function remembers its lexical scope even when executed outside it
+// Inner function retains access to outer function's variables
 
 function outer(x) {
   return function inner(y) {
-    return x + y;  // inner remembers x even after outer has returned
+    return x + y; // inner remembers x after outer returned
   };
 }
 
 const add5 = outer(5);
 console.log(add5(3)); // 8
 
-// Practical uses: data privacy, currying, memoization, event handlers`
+// Uses: data privacy, currying, memoization, module pattern`
   },
   {
     category: "Core JavaScript",
-    q: "How does the 'this' keyword work?",
+    q: "How does the 'this' keyword behave in different contexts?",
     tags: ["popular"],
-    a: `// 'this' depends on execution context (how a function is called):
+    a: `// 'this' depends on how function is called:
 
-// 1. Global context → window (or global in Node)
+// 1. Global → window/global
 console.log(this); // window
 
-// 2. Regular function → window (strict: undefined)
+// 2. Regular function → window (undefined in strict mode)
 function show() { console.log(this); }
-show(); // window (undefined in strict mode)
+show(); // window
 
 // 3. Object method → the object itself
 const obj = { name: "JS", show() { console.log(this.name); } };
 obj.show(); // "JS"
 
-// 4. Arrow function → inherits 'this' from parent scope (lexical this)
+// 4. Arrow function → inherits 'this' from parent scope (lexical)
 
-// 5. Constructor function (new) → the new instance
+// 5. Constructor (new) → new instance
 
-// 6. call/apply/bind → explicitly set 'this'`
+// 6. call/apply/bind → explicitly set this`
   },
   {
     category: "Core JavaScript",
-    q: "call, apply, bind — differences?",
+    q: "call vs apply vs bind — what's the difference?",
     tags: ["popular"],
-    a: `// All three explicitly set 'this'. Differences:
-// call  — args passed individually, invoked immediately
-// apply — args passed as array, invoked immediately
-// bind  — returns new function with bound 'this', NOT invoked immediately
+    a: `// call — args passed individually, invoked immediately
+// apply — args as array, invoked immediately
+// bind — returns new function with bound this, NOT invoked
 
 function greet(greeting, punctuation) {
   return greeting + ", " + this.name + punctuation;
@@ -132,43 +131,42 @@ function greet(greeting, punctuation) {
 
 const person = { name: "John" };
 
-console.log(greet.call(person, "Hello", "!"));   // "Hello, John!"
-console.log(greet.apply(person, ["Hi", "!!"]));  // "Hi, John!!"
+console.log(greet.call(person, "Hello", "!"));  // "Hello, John!"
+console.log(greet.apply(person, ["Hi", "!!"])); // "Hi, John!!"
 
 const bound = greet.bind(person, "Hey");
 console.log(bound("?")); // "Hey, John?"`
   },
   {
     category: "Core JavaScript",
-    q: "Arrow functions vs regular functions",
+    q: "Arrow functions vs regular functions — differences",
     tags: ["popular"],
-    a: `// 1. this binding: arrow inherits from parent (lexical); regular has own 'this'
-// 2. arguments: arrow has NO arguments object; regular does
-// 3. constructor: arrow cannot be used with 'new'
-// 4. hoisting: regular function declarations are hoisted; arrow are NOT
-// 5. syntax: arrow is more concise
+    a: `// Arrow vs regular:
+// this: arrow inherits lexically; regular has own this
+// arguments: arrow has none; regular does
+// constructor: arrow cannot use new
+// hoisting: function declarations hoisted; arrows are not
 
 const obj = {
   name: "Test",
   regular: function() { console.log(this.name); },
-  arrow: () => console.log(this.name)  // 'this' is window, NOT obj
+  arrow: () => console.log(this.name) // this = window, not obj
 };
 
 obj.regular(); // "Test"
-obj.arrow();   // undefined (window.name is undefined)`
+obj.arrow();   // undefined`
   },
   {
     category: "Core JavaScript",
-    q: "Prototypal Inheritance — how does it work?",
+    q: "How does prototypal inheritance work in JS?",
     tags: ["advanced"],
-    a: `// Every JS object has an internal [[Prototype]] (accessed via __proto__ or Object.getPrototypeOf)
-// Properties/methods are looked up along the prototype chain until found or null
+    a: `// Every JS object has internal [[Prototype]] (__proto__ / Object.getPrototypeOf)
+// Properties looked up along prototype chain until found or null
 
 const parent = { greet() { return "Hello"; } };
 const child = { name: "Child" };
-
 child.__proto__ = parent;
-console.log(child.greet()); // "Hello" — inherited from parent
+console.log(child.greet()); // "Hello" — inherited
 console.log(child.name);    // "Child" — own property
 
 function Animal(type) { this.type = type; }
@@ -180,10 +178,10 @@ console.log(dog instanceof Animal); // true`
   },
   {
     category: "Core JavaScript",
-    q: "Event Loop — explain microtasks vs macrotasks",
+    q: "Event Loop — microtasks vs macrotasks explained",
     tags: ["popular", "advanced"],
-    a: `// JS is single-threaded. Event Loop manages async execution:
-// Priority: Synchronous > Microtasks > Macrotasks
+    a: `// JS is single-threaded. Event Loop manages async execution order.
+// Priority: Sync > Microtasks > Macrotasks
 
 // Microtasks: Promise.then/catch/finally, queueMicrotask, MutationObserver
 // Macrotasks: setTimeout, setInterval, I/O, UI rendering
@@ -194,14 +192,14 @@ Promise.resolve().then(() => console.log(3)); // microtask
 console.log(4);                    // sync
 
 // Output: 1, 4, 3, 2
-// Why: sync runs first, microtask queue empties before next macrotask`
+// Why: sync first, microtask queue empties before next macrotask`
   },
   {
     category: "Core JavaScript",
-    q: "Promises vs Async/Await",
+    q: "Promises vs Async/Await — how are they related?",
     tags: ["popular"],
-    a: `// Promise: object representing eventual completion/failure of async operation
-// async/await: syntactic sugar over Promises — makes async code read like sync
+    a: `// Promise: object representing eventual completion/failure of async op
+// async/await: syntactic sugar over Promises, reads like sync code
 
 // Promise chain:
 fetch("/api/user")
@@ -220,15 +218,14 @@ async function getUser() {
   }
 }
 
-// await can only be used inside async function`
+// await only usable inside async function`
   },
   {
     category: "Core JavaScript",
-    q: "Event Delegation — what is it?",
+    q: "What is event delegation and why use it?",
     tags: ["popular"],
-    a: `// Instead of attaching event listeners to many child elements,
-// attach ONE listener to a parent and use event.target to identify which child fired it
-// Benefit: works for dynamically added elements, better performance
+    a: `// Attach ONE listener to parent, use event.target to identify child
+// Benefits: works for dynamic elements, better performance
 
 document.querySelector("#list").addEventListener("click", function(e) {
   if (e.target.matches(".item")) {
@@ -236,16 +233,16 @@ document.querySelector("#list").addEventListener("click", function(e) {
   }
 });
 
-// Event phases: capturing (top→down) → at target → bubbling (bottom→up)`
+// Event phases: capturing (top→down) → target → bubbling (bottom→up)`
   },
   {
     category: "Core JavaScript",
-    q: "Debouncing vs Throttling",
+    q: "Debouncing vs Throttling — differences and use cases",
     tags: ["popular"],
-    a: `// Debounce: delay execution until user STOPS triggering for N ms
-//           Used for: search input, auto-save, resize handler
-// Throttle: execute at most ONCE every N ms (no matter how many triggers)
-//           Used for: scroll handler, mousemove, game loop
+    a: `// Debounce: runs AFTER user stops triggering for N ms
+// Use: search input, auto-save, resize
+// Throttle: runs at most ONCE every N ms
+// Use: scroll, mousemove, game loop
 
 function debounce(fn, delay) {
   let timer;
@@ -268,9 +265,9 @@ function throttle(fn, limit) {
   },
   {
     category: "Core JavaScript",
-    q: "Shallow vs Deep Copy — how to make each?",
+    q: "Shallow copy vs Deep copy — how to create each?",
     tags: ["popular"],
-    a: `// Shallow copy: copies top-level properties; nested objects still referenced
+    a: `// Shallow: copies top-level only, nested objects still referenced
 const original = { a: 1, b: { c: 2 } };
 
 const shallow1 = { ...original };
@@ -280,14 +277,14 @@ console.log(original.b.c); // 99 — mutation affects original!
 
 // Deep copy:
 const deep1 = JSON.parse(JSON.stringify(original));      // loses functions/undefined
-const deep2 = structuredClone(original);                  // modern API — handles most types`
+const deep2 = structuredClone(original);                  // modern API`
   },
   {
     category: "Core JavaScript",
-    q: "Spread (...) vs Rest (...)?",
+    q: "Spread operator vs Rest parameter — differences",
     tags: ["popular"],
-    a: `// Spread: expands an array/object into individual elements
-// Rest: collects multiple elements into a single array/object
+    a: `// Spread: expands array/object into individual elements
+// Rest: collects multiple elements into single array/object
 
 // Spread:
 const arr = [1, 2, 3];
@@ -307,9 +304,9 @@ console.log(first, rest); // 1, [2,3,4]`
     category: "Core JavaScript",
     q: "map, filter, reduce — explain with examples",
     tags: ["popular"],
-    a: `// map     → transforms each element, returns new array (same length)
-// filter  → keeps elements that pass a test, returns subset
-// reduce  → accumulates values into a single result
+    a: `// map → transforms each element, returns new array (same length)
+// filter → keeps elements passing a test, returns subset
+// reduce → accumulates into single result
 
 const nums = [1, 2, 3, 4, 5];
 const doubled = nums.map(n => n * 2);           // [2, 4, 6, 8, 10]
@@ -322,10 +319,10 @@ console.log(result); // 120`
   },
   {
     category: "Core JavaScript",
-    q: "null vs undefined — differences?",
+    q: "null vs undefined — what's the difference?",
     tags: ["popular"],
-    a: `// undefined: variable declared but not assigned / property doesn't exist
-// null: intentional absence of any object value (assigned explicitly)
+    a: `// undefined: variable declared but not assigned / property missing
+// null: intentional absence of value (assigned explicitly)
 
 let a;
 console.log(a); // undefined
@@ -337,31 +334,31 @@ const b = null;
 console.log(b); // null
 
 console.log(typeof undefined); // "undefined"
-console.log(typeof null);      // "object" (historical bug)
+console.log(typeof null);      // "object" (historical JS bug)
 console.log(null == undefined);  // true
 console.log(null === undefined); // false`
   },
   {
     category: "Core JavaScript",
-    q: "IIFE — what is it and why use it?",
+    q: "What is an IIFE and when would you use it?",
     tags: ["popular"],
     a: `// IIFE = Immediately Invoked Function Expression
-// Runs as soon as it's defined. Creates a new scope — avoids polluting global scope
+// Runs immediately, creates private scope — avoids global pollution
 
 (function() {
   var privateVar = "I am private";
   console.log(privateVar);
 })();
-// privateVar is NOT accessible outside
+// privateVar not accessible outside
 
-// Modern alternative: just use { } block scope with let/const`
+// Modern alternative: just use { } block with let/const`
   },
   {
     category: "Core JavaScript",
-    q: "Currying — what is it? Give an example.",
+    q: "What is currying in JavaScript — give example",
     tags: ["advanced"],
-    a: `// Currying = transforming a function that takes multiple arguments
-// into a sequence of nested functions each taking a single argument
+    a: `// Currying = transform f(a,b,c) into f(a)(b)(c)
+// Each nested function takes one argument
 
 function curriedAdd(a) {
   return function(b) {
@@ -374,15 +371,15 @@ console.log(curriedAdd(1)(2)(3)); // 6
 
 const curry = (a) => (b) => (c) => a + b + c;
 
-// Practical: create partially-applied functions for reuse
+// Useful for partially-applied functions
 const add5 = curry(5);
 console.log(add5(3)(2)); // 10`
   },
   {
     category: "Core JavaScript",
-    q: "Memoization — what is it? Implement it.",
+    q: "What is memoization — implement a generic memoize function",
     tags: ["advanced"],
-    a: `// Memoization = caching function results to avoid recomputation
+    a: `// Memoization = cache function results to avoid recomputation
 
 function memoize(fn) {
   const cache = {};
@@ -394,17 +391,15 @@ function memoize(fn) {
   };
 }
 
-// Usage:
 const slowFib = (n) => n <= 1 ? n : slowFib(n - 1) + slowFib(n - 2);
 const fastFib = memoize(slowFib);
-console.time("fastFib(40)");
 console.log(fastFib(40)); // 102334155 — milliseconds vs seconds`
   },
   {
     category: "Core JavaScript",
-    q: "Generator Functions — what and why?",
+    q: "What are generator functions and when to use them?",
     tags: ["advanced"],
-    a: `// Generator functions can pause execution (yield) and resume later
+    a: `// Generator functions can pause (yield) and resume later
 // Returns an iterator with .next()
 
 function* idGenerator() {
@@ -420,12 +415,12 @@ console.log(gen.next().value); // 2
   },
   {
     category: "Core JavaScript",
-    q: "Set, Map, WeakSet, WeakMap — differences",
+    q: "Set vs Map vs WeakSet vs WeakMap — when to use each",
     tags: ["advanced"],
     a: `// Set: unique values
-// Map: key-value pairs (keys can be ANY type)
-// WeakSet: only objects, held weakly (garbage-collected)
-// WeakMap: keys must be objects, held weakly, no .size/.keys/.entries
+// Map: key-value pairs (any type keys)
+// WeakSet: objects only, held weakly (GC eligible)
+// WeakMap: object keys only, held weakly, no .size/.keys/.entries
 
 const set = new Set([1, 2, 2, 3]);
 console.log([...set]); // [1, 2, 3]
@@ -434,7 +429,7 @@ const map = new Map();
 map.set("name", "John");
 console.log(map.get("name")); // "John"
 
-// WeakMap — keys are GC'd when no other refs exist
+// WeakMap — keys GC'd when no other refs exist
 const cache = new WeakMap();
 function process(obj) {
   if (!cache.has(obj)) cache.set(obj, expensiveComputation(obj));
@@ -443,26 +438,26 @@ function process(obj) {
   },
   {
     category: "Core JavaScript",
-    q: "typeof vs instanceof",
+    q: "typeof vs instanceof — how to check types in JS",
     tags: ["popular"],
     a: `// typeof → returns string of primitive type
-// instanceof → checks if object is instance of a constructor (walks prototype chain)
+// instanceof → checks if object is instance of constructor (walks prototype chain)
 
 console.log(typeof "hello");   // "string"
 console.log(typeof null);      // "object" — known JS bug
 console.log(typeof []);        // "object"
 
 console.log([] instanceof Array);    // true
-console.log([] instanceof Object);   // true (Array extends Object)
+console.log([] instanceof Object);   // true
 console.log(Array.isArray([])); // true — reliable check`
   },
   {
     category: "Core JavaScript",
-    q: "try/catch/finally — error handling patterns",
+    q: "How does try/catch/finally work for error handling?",
     tags: ["popular"],
     a: `// try: wrap code that might throw
 // catch: handle the error
-// finally: ALWAYS runs (whether error or not)
+// finally: ALWAYS runs (error or not)
 
 class ValidationError extends Error {
   constructor(message) { super(message); this.name = "ValidationError"; }
@@ -479,9 +474,9 @@ try {
   },
   {
     category: "Core JavaScript",
-    q: "JSON methods — parse & stringify",
+    q: "JSON.parse and JSON.stringify — how and when to use",
     tags: ["popular"],
-    a: `// JSON.parse(str)     → JSON string → JS object
+    a: `// JSON.parse(str) → JSON string → JS object
 // JSON.stringify(obj) → JS object → JSON string
 
 const jsonStr = '{"name":"John","age":30}';
@@ -496,116 +491,107 @@ console.log(obj.name); // "John"
     category: "React.js",
     q: "What is the Virtual DOM and how does it work?",
     tags: ["popular", "react"],
-    a: `// Virtual DOM = lightweight JS representation of the real DOM
-// Why: real DOM manipulation is slow; Virtual DOM batches updates
+    a: `// Virtual DOM = lightweight JS representation of real DOM
+// Real DOM manip is slow; Virtual DOM batches updates
 
 // How it works:
 // 1. Render → creates Virtual DOM tree
-// 2. Diffing (reconciliation) → compares prev VDOM with new VDOM
-// 3. Patching → computes minimal set of DOM operations
+// 2. Diffing (reconciliation) → compares prev vs new VDOM
+// 3. Patching → computes minimal DOM operations
 // 4. Commit → applies changes to real DOM
 
-// React uses Fiber architecture:
+// React Fiber architecture:
 // - Incremental rendering (splits work into chunks)
-// - Ability to pause/abort work (concurrent mode)
-// - Prioritizes high-priority updates (user input > data fetch)`
+// - Can pause/abort work (concurrent mode)
+// - Prioritizes high-priority updates (input > fetch)`
   },
   {
     category: "React.js",
-    q: "React Hooks — explain useState, useEffect, useRef, useCallback, useMemo, useReducer",
+    q: "Explain common React hooks — useState, useEffect, useRef, useCallback, useMemo, useReducer",
     tags: ["popular", "react"],
     a: `// useState — state in functional components
 const [count, setCount] = useState(0);
 
-// useEffect — side effects (API calls, subscriptions, DOM manipulation)
+// useEffect — side effects (API calls, subscriptions, DOM)
 useEffect(() => {
   fetchData();
   return () => cleanup(); // cleanup on unmount
-}, [deps]); // runs when deps change, empty [] = mount only
+}, [deps]); // runs when deps change, [] = mount only
 
-// useRef — mutable ref that persists across renders (no re-render)
+// useRef — mutable ref persisting across renders (no re-render)
 const inputRef = useRef(null);
 inputRef.current.focus();
 
-// useCallback — memoizes a function reference (prevents child re-renders)
+// useCallback — memoizes function reference (prevents child re-renders)
 const handleClick = useCallback(() => doSomething(a), [a]);
 
-// useMemo — memoizes a computed value (expensive calculations)
+// useMemo — memoizes computed value (expensive calcs)
 const sorted = useMemo(() => arr.sort(), [arr]);
 
-// useReducer — complex state logic (like Redux-lite)
+// useReducer — complex state logic (Redux-lite)
 const [state, dispatch] = useReducer(reducer, initialState);`
   },
   {
     category: "React.js",
-    q: "Class lifecycle methods vs useEffect",
+    q: "Class lifecycle methods vs useEffect — mapping",
     tags: ["react"],
-    a: `// Mounting:
-// componentDidMount → useEffect(() => {}, [])
+    a: `// Mounting: componentDidMount → useEffect(() => {}, [])
+// Updating: componentDidUpdate → useEffect(() => {}, [prop])
+// Unmounting: componentWillUnmount → useEffect(() => () => {}, [])
+// shouldComponentUpdate → React.memo / PureComponent
 
-// Updating:
-// componentDidUpdate(prevProps) → useEffect(() => {}, [prop])
-
-// Unmounting:
-// componentWillUnmount → useEffect(() => { return () => {}; }, [])
-
-// getDerivedStateFromProps → rarely needed; usually lift state up
-
-// shouldComponentUpdate → React.memo (functional) / PureComponent (class)
-
-// Example:
 useEffect(() => {
   console.log("Mounted + Updated when count changes");
-  return () => console.log("Cleanup runs before unmount or re-run");
+  return () => console.log("Cleanup on unmount or re-run");
 }, [count]);`
   },
   {
     category: "React.js",
-    q: "Keys in React — why are they important?",
+    q: "Why are keys important in React lists?",
     tags: ["popular", "react"],
-    a: `// Keys help React identify which items changed, added, or removed
-// They should be STABLE, UNIQUE, and PREDICTABLE
+    a: `// Keys help React identify which items changed, added, removed
+// Should be STABLE, UNIQUE, PREDICTABLE
 
-// ❌ Bad — using index as key (when list can change):
+// Bad — using index as key (when list can change):
 {todos.map((todo, index) => <Todo key={index} todo={todo} />)}
-// Index-based keys cause bugs with: reordering, deletion, filtering
+// Index keys cause bugs with reordering, deletion, filtering
 
-// ✅ Good — using unique id:
+// Good — using unique id:
 {todos.map(todo => <Todo key={todo.id} todo={todo} />)}
 
-// ✅ Stable non-id fallback (when no id exists):
+// Stable fallback (when no id exists):
 {todos.map((todo, i) => <Todo key={todo.text + i} todo={todo} />)}`
   },
   {
     category: "React.js",
-    q: "React.memo, useMemo, useCallback — when to use each?",
+    q: "React.memo vs useMemo vs useCallback — when to use each",
     tags: ["react"],
-    a: `// React.memo → wraps a component to skip re-render if props haven't changed
+    a: `// React.memo — wraps component to skip re-render if props unchanged
 const Heavy = React.memo(function Heavy({ data }) {
   return <div>{/* expensive render */}</div>;
 });
 
-// useMemo → memoizes a VALUE to avoid expensive computations
+// useMemo — memoizes a VALUE to avoid expensive computations
 const sortedData = useMemo(() => {
   return data.sort((a, b) => a.name.localeCompare(b.name));
 }, [data]);
 
-// useCallback → memoizes a FUNCTION reference (passing to child)
+// useCallback — memoizes a FUNCTION reference (passing to child)
 const onDelete = useCallback((id) => {
   setItems(prev => prev.filter(i => i.id !== id));
 }, []);
 
 // When to use:
-// - React.memo: pure components that re-render often with same props
-// - useMemo: expensive calculations (sorting, filtering, math)
+// - React.memo: pure components re-rendering often with same props
+// - useMemo: expensive calculations (sorting, filtering)
 // - useCallback: callbacks passed to memoized children
-// Rule: don't optimize prematurely — measure first!`
+// Don't optimize prematurely — measure first`
   },
   {
     category: "React.js",
-    q: "Controlled vs Uncontrolled components",
+    q: "Controlled vs Uncontrolled components — differences",
     tags: ["popular", "react"],
-    a: `// Controlled: React manages the form state (single source of truth)
+    a: `// Controlled: React manages form state (single source of truth)
 const Controlled = () => {
   const [value, setValue] = useState("");
   return <input value={value} onChange={e => setValue(e.target.value)} />;
@@ -618,12 +604,12 @@ const Uncontrolled = () => {
   return <input ref={ref} defaultValue="hello" />;
 };
 
-// Preference: CONTROLLED for most cases
+// Preference: Controlled for most cases
 // Uncontrolled: file inputs, simple forms, performance-critical`
   },
   {
     category: "React.js",
-    q: "What is the Context API and when would you use it vs Redux?",
+    q: "Context API vs Redux — when to use which?",
     tags: ["popular", "react"],
     a: `// Context API: built-in React solution for prop drilling
 // Use for: theme, locale, auth user, simple global state
@@ -649,9 +635,9 @@ function Toolbar() {
   },
   {
     category: "React.js",
-    q: "Higher-Order Component (HOC) vs Render Props vs Hooks",
+    q: "HOC vs Render Props vs Hooks — patterns comparison",
     tags: ["react", "advanced"],
-    a: `// HOC — function that wraps a component to add behavior
+    a: `// HOC — function wrapping a component to add behavior
 function withAuth(Component) {
   return function Authenticated(props) {
     const user = useAuth();
@@ -659,7 +645,7 @@ function withAuth(Component) {
   };
 }
 
-// Render Props — component that takes a function as its child
+// Render Props — component taking a function as its child
 <MouseTracker render={(pos) => <p>{pos.x}, {pos.y}</p>} />
 
 // Custom Hooks (modern preferred approach):
@@ -672,44 +658,38 @@ function useMousePosition() {
   }, []);
   return pos;
 }
-// Usage: const { x, y } = useMousePosition();
 // Hooks > HOC > Render Props for most cases`
   },
   {
     category: "React.js",
-    q: "What is Reconciliation in React?",
+    q: "How does Reconciliation work in React?",
     tags: ["react", "advanced"],
-    a: `// Reconciliation = algorithm that diffs two Virtual DOM trees
-// Algorithm:
-// 1. Different element types? → tear down and rebuild entire subtree
+    a: `// Reconciliation = algorithm diffing two Virtual DOM trees
+// 1. Different element types? → teardown + rebuild entire subtree
 // 2. Same type? → update attributes, recurse on children
-// 3. Keys? → use them to match children across renders
+// 3. Keys? → match children across renders
 
-// Fiber architecture (React 16+) breaks work into units:
-// - Each fiber = a unit of work (corresponds to a component)
-// - Can pause, abort, or prioritize work
+// Fiber (React 16+) breaks work into units:
+// - Each fiber = unit of work (maps to a component)
+// - Can pause, abort, or prioritize
 // - Enables Concurrent Mode and Suspense
 
-// Without keys:
-// <div> → <span> → FULL unmount + remount
-
-// With keys:
-// [<li key="a">, <li key="b">] → [<li key="b">, <li key="a">]
-// React reorders nodes instead of destroying/creating`
+// Without keys: full unmount + remount on reorder
+// With keys: React reorders nodes instead of destroy/create`
   },
   {
     category: "React.js",
-    q: "How do you optimize React performance?",
+    q: "How do you optimize React app performance?",
     tags: ["popular", "react"],
     a: `// 1. React.memo() — skip re-render if props unchanged
 // 2. useMemo + useCallback — memoize values and functions
 // 3. Code splitting — React.lazy + Suspense
-// 4. Virtualization — react-window / react-virtualized for long lists
-// 5. Debounced inputs — prevent excessive re-renders on keystroke
-// 6. Avoid anonymous functions in JSX (breaks memoization)
+// 4. Virtualization — react-window for long lists
+// 5. Debounced inputs — prevent excessive re-renders
+// 6. Avoid anonymous functions in JSX (breaks memo)
 // 7. Use proper keys in lists
 // 8. Lazy load images — loading="lazy"
-// 9. Bundle analysis — find large deps with webpack-bundle-analyzer
+// 9. Bundle analysis — find large deps
 // 10. useTransition (React 18) — mark non-urgent updates
 
 const HeavyList = React.lazy(() => import("./HeavyList"));
@@ -719,27 +699,27 @@ const HeavyList = React.lazy(() => import("./HeavyList"));
   },
   {
     category: "React.js",
-    q: "React 18 features — concurrent rendering, transitions, Suspense",
+    q: "React 18 new features — concurrent rendering, transitions, Suspense",
     tags: ["react", "advanced"],
     a: `// React 18 key features:
 
 // 1. Automatic Batching — multiple setState in same handler = one render
 setCount(c => c + 1);
 setFlag(f => !f);
-// React 18 batches these automatically (even in setTimeout/promises)
+// React 18 batches automatically (even in setTimeout/promises)
 
 // 2. Transitions — mark non-urgent updates
 const [isPending, startTransition] = useTransition();
 startTransition(() => {
-  setSearchQuery(input); // this update can be interrupted
+  setSearchQuery(input); // interruptible
 });
 
 // 3. Suspense on server — SSR streaming
 // 4. useId() — generates unique IDs for accessibility
-// 5. useDeferredValue — defer re-rendering for slow values
+// 5. useDeferredValue — defer re-rendering slow values
 // 6. New Root API:
 const root = createRoot(document.getElementById("root"));
-root.render(<App />); // vs ReactDOM.render()`
+root.render(<App />);`
   },
 
   // ─── NODE.JS / EXPRESS ──────────────────────────────────────
@@ -747,19 +727,18 @@ root.render(<App />); // vs ReactDOM.render()`
     category: "Node.js / Express",
     q: "How does the Node.js Event Loop work?",
     tags: ["popular", "node"],
-    a: `// Node.js is single-threaded, non-blocking I/O using Event Loop
-// Libuv provides the Event Loop implementation
+    a: `// Node.js single-threaded, non-blocking I/O via Event Loop (libuv)
 
-// Phases in order (each phase has a FIFO callback queue):
-// 1. timers → setTimeout, setInterval callbacks
-// 2. pending callbacks → I/O callbacks deferred to next iteration
-// 3. idle, prepare → internal use
-// 4. poll → retrieve new I/O events (blocking)
-// 5. check → setImmediate callbacks
-// 6. close callbacks → close event callbacks
+// Event Loop phases (each has FIFO callback queue):
+// 1. timers → setTimeout, setInterval
+// 2. pending callbacks → deferred I/O
+// 3. idle, prepare → internal
+// 4. poll → retrieve I/O events (blocking)
+// 5. check → setImmediate
+// 6. close callbacks → close events
 
-// Between each phase: microtask queues are drained:
-// - process.nextTick queue (highest priority)
+// Between phases: microtask queues drained:
+// - process.nextTick (highest priority)
 // - Promise callbacks
 
 console.log("start");
@@ -772,44 +751,43 @@ console.log("end");
   },
   {
     category: "Node.js / Express",
-    q: "Express.js middleware — how does it work?",
+    q: "How does Express.js middleware work?",
     tags: ["popular", "node"],
-    a: `// Middleware = functions that have access to req, res, and next
-// They can: execute code, modify req/res, end request, call next middleware
+    a: `// Middleware = functions with access to req, res, next
+// Can: execute code, modify req/res, end request, call next
 
-// Application-level middleware:
+// Application-level:
 app.use((req, res, next) => {
   console.log(\`\${req.method} \${req.url}\`);
-  next(); // pass control to next middleware
+  next(); // pass to next middleware
 });
 
-// Route-level middleware:
+// Route-level:
 app.get("/api/users", authMiddleware, (req, res) => {
   res.json(users);
 });
 
-// Error-handling middleware (4 args — must have exactly (err, req, res, next)):
+// Error-handling (4 args — err, req, res, next):
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ error: "Something broke!" });
 });
 
-// Common middleware: express.json(), cors(), morgan, helmet, passport`
+// Common: express.json(), cors(), morgan, helmet, passport`
   },
   {
     category: "Node.js / Express",
-    q: "Streams in Node.js — what are they and types?",
+    q: "What are Node.js streams and their types?",
     tags: ["node", "advanced"],
-    a: `// Streams = process data chunk by chunk instead of loading entire thing
-// Perfect for: large files, network responses, video streaming
+    a: `// Streams = process data chunk by chunk (not entire file at once)
+// Perfect for: large files, network, video streaming
 
 // 4 types:
-// 1. Readable → source of data (fs.createReadStream)
+// 1. Readable → data source (fs.createReadStream)
 // 2. Writable → destination (fs.createWriteStream)
-// 3. Duplex → both readable and writable (net.Socket)
+// 3. Duplex → both readable + writable (net.Socket)
 // 4. Transform → modifies data while reading/writing (zlib.Gzip)
 
-// Read file using stream (memory efficient):
 const readStream = fs.createReadStream("bigfile.txt", { encoding: "utf8" });
 readStream.on("data", chunk => console.log("Chunk:", chunk.length));
 readStream.on("end", () => console.log("Done"));
@@ -817,15 +795,14 @@ readStream.on("end", () => console.log("Done"));
 // Pipe — automatic flow control:
 readStream.pipe(zlib.createGzip()).pipe(fs.createWriteStream("file.gz"));
 
-// Backpressure: when consumer is slower than producer
-// .pipe() handles it automatically via drain events`
+// Backpressure: consumer slower than producer — .pipe() handles it`
   },
   {
     category: "Node.js / Express",
-    q: "How do you handle errors in Node.js/Express?",
+    q: "How do you handle errors in Node.js and Express?",
     tags: ["popular", "node"],
-    a: `// 1. Synchronous: try/catch
-// 2. Async: catch errors in promises / async functions
+    a: `// 1. Sync: try/catch
+// 2. Async: catch errors in promises/async functions
 // 3. Express async handler wrapper:
 
 const asyncHandler = (fn) => (req, res, next) =>
@@ -836,57 +813,52 @@ app.get("/data", asyncHandler(async (req, res) => {
   res.json(data);
 }));
 
-// 4. Global error handler (must be last middleware):
+// 4. Global error handler (last middleware):
 app.use((err, req, res, next) => {
   const status = err.status || 500;
-  const message = err.message || "Internal Server Error";
-  console.error(\`[\${status}] \${message}\`);
-  res.status(status).json({ error: message });
+  console.error(\`[\${status}] \${err.message}\`);
+  res.status(status).json({ error: err.message });
 });
 
 // 5. Uncaught exceptions / unhandled rejections:
 process.on("unhandledRejection", (reason) => {
   console.error("Unhandled Rejection:", reason);
-  process.exit(1); // best practice: crash and restart
+  process.exit(1); // crash + restart recommended
 });`
   },
   {
     category: "Node.js / Express",
-    q: "What is the Cluster module in Node.js?",
+    q: "What is the Cluster module and when to use it?",
     tags: ["node", "advanced"],
-    a: `// Cluster allows a Node.js app to spawn multiple processes (workers)
-// to utilize all CPU cores. Each worker handles requests independently.
+    a: `// Cluster = spawn multiple processes to utilize all CPU cores
 
 const cluster = require("cluster");
 const http = require("http");
 const numCPUs = require("os").cpus().length;
 
 if (cluster.isMaster) {
-  console.log(\`Master \${process.pid} is running\`);
-  // Fork workers
+  console.log(\`Master \${process.pid} running\`);
   for (let i = 0; i < numCPUs; i++) cluster.fork();
 
-  cluster.on("exit", (worker, code, signal) => {
+  cluster.on("exit", (worker) => {
     console.log(\`Worker \${worker.process.pid} died\`);
     cluster.fork(); // auto-restart
   });
 } else {
-  // Workers share the TCP connection
   http.createServer((req, res) => {
     res.writeHead(200);
     res.end("Hello from worker " + process.pid);
   }).listen(8000);
 }
 
-// Alternative: PM2 process manager (handles clustering + auto-restart)
-// pm2 start app.js -i max`
+// Alternative: PM2 — pm2 start app.js -i max`
   },
   {
     category: "Node.js / Express",
-    q: "What is the difference between process.nextTick() and setImmediate()?",
+    q: "process.nextTick() vs setImmediate() — what's the difference?",
     tags: ["advanced", "node"],
-    a: `// nextTick()  → runs BEFORE the next macrotask (at end of current phase)
-// setImmediate() → runs in the CHECK phase (after macrotasks)
+    a: `// nextTick() → runs BEFORE next macrotask (end of current phase)
+// setImmediate() → runs in CHECK phase (after macrotasks)
 
 // Priority: nextTick > Promise > timers > setImmediate
 
@@ -896,41 +868,35 @@ setImmediate(() => console.log("3"));
 process.nextTick(() => console.log("4"));
 console.log("5");
 
-// Output: 1, 5, 4, 2, 3
-// Note: setTimeout vs setImmediate order may vary in poll phase`
+// Output: 1, 5, 4, 2, 3`
   },
 
   // ─── TYPESCRIPT ────────────────────────────────────────────
   {
     category: "TypeScript",
-    q: "TypeScript vs JavaScript — key differences?",
+    q: "TypeScript vs JavaScript — key differences",
     tags: ["popular"],
-    a: `// TypeScript = JavaScript + static typing
-// TS compiles to JS (transpilation)
+    a: `// TypeScript = JavaScript + static typing (transpiles to JS)
 
-// Key benefits:
+// Benefits:
 // 1. Static type checking at compile time
 // 2. Better IDE support (autocomplete, refactoring)
 // 3. Interfaces, generics, enums, decorators
 // 4. Catches bugs BEFORE runtime
 // 5. Self-documenting code
 
-// JS → TS:
-let name = "John";     // JS
-let name: string = "John"; // TS
-
-// Type inference — TS often knows the type without explicit annotation
-let age = 25; // TS infers number
+let name: string = "John"; // explicit type
+let age = 25; // type inference → number
 
 // any vs unknown:
 let a: any = "hello";      // disables type checking
-let b: unknown = "hello";  // must narrow type before use`
+let b: unknown = "hello";  // must narrow before use`
   },
   {
     category: "TypeScript",
-    q: "Interfaces vs Types — when to use which?",
+    q: "Interfaces vs Types in TypeScript — when to use each",
     tags: ["popular"],
-    a: `// INTERFACE — describes shape of an object (can be extended)
+    a: `// INTERFACE — describes object shape, can be extended
 interface User {
   name: string;
   age: number;
@@ -939,27 +905,24 @@ interface Admin extends User {
   role: "admin" | "superadmin";
 }
 
-// TYPE — union, intersection, primitives, tuple, mapped types
+// TYPE — unions, intersections, primitives, tuples, mapped types
 type Status = "active" | "inactive";
 type Point = { x: number; y: number };
 type NamedPoint = Point & { name: string };
 
 // Key differences:
-// - Interface can be merged (declaration merging)
-// - Type alias cannot be extended (but can use intersection &)
-// - Use interface for OOP-style, type for complex unions
+// - Interface: declaration merging (extensible)
+// - Type: cannot extend, but can use intersection (&)
+// - Interface for OOP-style, type for complex unions
 
-// Rule of thumb:
-// library/API types → interface (extensible)
-// unions/tuples/mapped → type`
+// Rule: library/API types → interface; unions/tuples → type`
   },
   {
     category: "TypeScript",
-    q: "Generics in TypeScript — explain with example",
+    q: "How do generics work in TypeScript — example",
     tags: ["popular", "advanced"],
-    a: `// Generics = create reusable components that work with ANY type
+    a: `// Generics = reusable components working with ANY type
 
-// Simple generic function:
 function identity<T>(arg: T): T {
   return arg;
 }
@@ -978,7 +941,7 @@ const userResponse: ApiResponse<{ id: number; name: string }> = {
   message: "OK"
 };
 
-// Generic constraint — T must have a .length property:
+// Generic constraint — T must have .length:
 function getLength<T extends { length: number }>(arg: T): number {
   return arg.length;
 }
@@ -987,280 +950,248 @@ getLength([1,2,3]); // 3`
   },
   {
     category: "TypeScript",
-    q: "Utility Types — Partial, Required, Pick, Omit, Record",
+    q: "Utility types — Partial, Required, Pick, Omit, Record explained",
     tags: ["popular", "advanced"],
-    a: `// Partial<T> → all properties become optional
+    a: `// Partial<T> → all properties optional
 interface User { id: number; name: string; email: string; }
-const updateUser: Partial<User> = { name: "New Name" };
+const update: Partial<User> = { name: "New Name" };
 
-// Required<T> → all properties become required
-const fullUser: Required<Partial<User>> = { id: 1, name: "a", email: "a@b" };
+// Required<T> → all required
+const full: Required<Partial<User>> = { id: 1, name: "a", email: "a@b" };
 
 // Pick<T, K> → pick specific keys
-const userPreview: Pick<User, "id" | "name"> = { id: 1, name: "John" };
+const preview: Pick<User, "id" | "name"> = { id: 1, name: "John" };
 
-// Omit<T, K> → omit specific keys
-const userWithoutId: Omit<User, "id"> = { name: "John", email: "j@b.com" };
+// Omit<T, K> → remove specific keys
+const withoutId: Omit<User, "id"> = { name: "John", email: "j@b.com" };
 
-// Record<K, T> → object with keys K and values T
+// Record<K, T> → object type with keys K and values T
 const roles: Record<string, string[]> = {
   admin: ["read", "write", "delete"],
   user: ["read"]
 };
 
-// Readonly<T> → makes all properties readonly
-// Exclude<T, U> / Extract<T, U> → union filtering
-// NonNullable<T> → removes null/undefined
-// ReturnType<T> → extract return type of a function`
+// Readonly<T> → all readonly
+// Exclude/Extract → union filtering
+// ReturnType<T> → extract return type of function`
   },
 
   // ─── DATABASE & CACHING ────────────────────────────────────
   {
     category: "Database & Caching",
-    q: "MongoDB vs MySQL — when to use which?",
+    q: "MongoDB vs MySQL — when to use each",
     tags: ["popular"],
-    a: `// MONGODB (NoSQL — document database):
-// - Schema-less (flexible documents)
-// - JSON-like documents (BSON)
+    a: `// MONGODB (NoSQL — document DB):
+// - Schema-less, JSON-like documents (BSON)
 // - Horizontal scaling (sharding) built-in
-// - Great for: prototyping, unstructured data, real-time analytics
-// - Use when: data shape changes often, need fast iteration,
-//   hierarchical data (nested documents)
+// - Good for: prototyping, unstructured data, real-time analytics
+// - Use when: data shape changes often, hierarchical data
 
-// MYSQL (SQL — relational database):
-// - Strict schema with relationships
-// - ACID compliant (transactions)
+// MYSQL (SQL — relational DB):
+// - Strict schema with relationships, ACID compliant
 // - Powerful JOINs and complex queries
-// - Great for: financial data, complex reporting, strict consistency
-// - Use when: relationships between entities, need referential integrity
+// - Good for: financial data, strict consistency, reporting
+// - Use when: relationships between entities matter
 
-// Rule of thumb: use SQL unless you have a reason not to.
-// Many modern apps use both — SQL for core + MongoDB for flexible data.`
+// Rule: use SQL unless you have reason not to
+// Many apps use both — SQL for core + MongoDB for flexible data`
   },
   {
     category: "Database & Caching",
-    q: "Indexing in databases — what and why?",
+    q: "What is database indexing and why is it important?",
     tags: ["popular"],
-    a: `// Index = data structure (B-tree, hash) that speeds up data retrieval
-// Trade-off: faster reads, slower writes (must update index on insert/update)
+    a: `// Index = data structure (B-tree, hash) speeding up retrieval
+// Trade-off: faster reads, slower writes (index updated on insert/update)
 
-// Without index: FULL TABLE SCAN (slow for millions of rows)
-// With index: B-tree lookup → O(log n)
+// Without index: FULL TABLE SCAN (slow for millions)
+// With index: B-tree → O(log n)
 
 // MongoDB:
-db.users.createIndex({ email: 1 }); // ascending index
-db.users.createIndex({ name: "text", bio: "text" }); // text search
+db.users.createIndex({ email: 1 });
+db.users.createIndex({ name: "text", bio: "text" });
 
 // MySQL:
 CREATE INDEX idx_email ON users(email);
-CREATE UNIQUE INDEX idx_email ON users(email); // unique constraint
+CREATE UNIQUE INDEX idx_email ON users(email);
 
 // Compound index — covers multiple fields:
 db.orders.createIndex({ userId: 1, createdAt: -1 });
-// Order matters: put high-selectivity fields first
-
-// Covered query — all needed fields are in the index itself`
+// Order matters: put high-selectivity fields first`
   },
   {
     category: "Database & Caching",
-    q: "Redis — common use cases and data structures",
+    q: "Redis use cases and common data structures",
     tags: ["popular"],
-    a: `// Redis = in-memory key-value store (sub-millisecond latency)
-// Used for: caching, session store, rate limiting, pub/sub, queues
+    a: `// Redis = in-memory key-value store (sub-ms latency)
+// Use: caching, session store, rate limiting, pub/sub, queues
 
 // Common data structures:
 SET key "value"                     // String
 HSET user:1 name "John"             // Hash
 LPUSH queue task1                   // List
-SADD tags "javascript"              // Set (unique, unordered)
-ZADD leaderboard 100 "player1"      // Sorted Set (unique, ordered by score)
+SADD tags "javascript"              // Set (unique)
+ZADD leaderboard 100 "player1"      // Sorted Set
 PUBLISH channel message             // Pub/Sub
 
-// EXPIRE — auto-delete keys (TTL):
-SET session:abc "data" EX 3600      // expires in 1 hour
+// EXPIRE — auto-delete keys:
+SET session:abc "data" EX 3600      // 1 hour TTL
 
 // Caching pattern:
 async function getUser(id) {
   const cached = await redis.get(\`user:\${id}\`);
   if (cached) return JSON.parse(cached);
-
   const user = await db.findUser(id);
   await redis.setEx(\`user:\${id}\`, 3600, JSON.stringify(user));
   return user;
 }
 
-// My experience: 50% response time reduction with Redis caching`
+// My experience: 50% response time reduction with Redis`
   },
   {
     category: "Database & Caching",
-    q: "SQL vs NoSQL — when would you pick each?",
+    q: "SQL vs NoSQL — when to choose each",
     tags: ["popular"],
     a: `// PICK SQL (PostgreSQL/MySQL) when:
 // - Complex relationships and JOINs
 // - Strict data integrity (ACID)
-// - Structured data that doesn't change shape often
-// - Complex reporting/analytics queries
+// - Structured data, stable schema
 // - Transactions across multiple records
 
-// PICK NoSQL (MongoDB/DynamoDB/Firebase) when:
-// - Rapid prototyping / flexible schema
+// PICK NoSQL (MongoDB/DynamoDB) when:
+// - Rapid prototyping, flexible schema
 // - Hierarchical or nested data
 // - Horizontal scaling is critical
-// - High write throughput
-// - Eventually consistent reads are acceptable
+// - Eventually consistent reads acceptable
 
 // Many production systems are polyglot:
-// - SQL for orders/payments (strict consistency)
-// - MongoDB/Firebase for content/catalog (flexible)
-// - Redis for caching/sessions (speed)`
+// SQL for orders/payments, NoSQL for content, Redis for cache`
   },
 
   // ─── AUTHENTICATION & SECURITY ─────────────────────────────
   {
     category: "Authentication & Security",
-    q: "JWT vs Session-based Auth — differences?",
+    q: "JWT vs Session-based authentication — differences",
     tags: ["popular"],
-    a: `// JWT (JSON Web Token):
-// - Stateless: token carries user data, no server-side storage
-// - Format: header.payload.signature (base64-encoded)
-// - Scale: easy to scale horizontally (no shared session store)
-// - Cons: cannot revoke individual tokens (must wait for expiry)
+    a: `// JWT (JSON Web Token) — stateless:
+// Token carries user data, no server storage
+// Format: header.payload.signature (base64)
+// Easy to scale (no shared session store)
+// Con: cannot revoke individual tokens (wait for expiry)
 
-// JWT flow:
-// Login → server creates {user, role, exp} signed with SECRET → client stores
-// Every request → client sends Authorization: Bearer <token>
+// Flow: Login → server creates signed token → client stores
+// Every request: Authorization: Bearer <token>
 // Server verifies signature, extracts user info
 
-// Session-based:
-// - Stateful: server stores session in memory/DB/Redis
-// - Session ID in cookie (httpOnly, secure, sameSite)
-// - Easy to revoke (delete session from store)
-// - Requires shared session store for multi-server
+// Session-based — stateful:
+// Server stores session in memory/DB/Redis
+// Session ID in cookie (httpOnly, secure, sameSite)
+// Easy to revoke (delete session)
+// Needs shared session store for multi-server
 
-// My preference: JWT for API/mobile, Sessions for server-rendered web
-// Best of both: JWT short-lived (15 min) + refresh token (7 days)`
+// Best: JWT short-lived (15 min) + refresh token (7 days)`
   },
   {
     category: "Authentication & Security",
-    q: "Common web security vulnerabilities — XSS, CSRF, SQL Injection",
+    q: "Common web security vulnerabilities — XSS, CSRF, SQL injection",
     tags: ["popular"],
     a: `// 1. XSS (Cross-Site Scripting):
 // Attacker injects malicious scripts into web pages
-// Prevention: sanitize user input, use CSP headers, escape output
+// Prevention: sanitize input, CSP headers, escape output
 // React handles this by default (JSX escapes values)
 
 // 2. CSRF (Cross-Site Request Forgery):
-// Attacker tricks user into making unwanted requests
-// Prevention: CSRF tokens, SameSite cookies, double-submit cookies
-// SameSite=Strict or Lax prevents CSRF in modern browsers
+// Attacker tricks user into unwanted requests
+// Prevention: CSRF tokens, SameSite cookies
+// SameSite=Strict/Lax prevents CSRF in modern browsers
 
 // 3. SQL Injection:
 // Attacker injects SQL via form inputs
-// Prevention: parameterized queries (NEVER string concatenation)
+// Prevention: parameterized queries (NEVER string concat)
 // ✅ db.query("SELECT * FROM users WHERE id = $1", [userId])
 // ❌ db.query(\`SELECT * FROM users WHERE id = \${userId}\`)
 
-// Additional measures:
-// - HTTPS everywhere
-// - helmet middleware (sets security headers)
-// - Rate limiting (brute force protection)
-// - Input validation (whitelist, not blacklist)`
+// Additional: HTTPS, helmet middleware, rate limiting, input validation`
   },
   {
     category: "Authentication & Security",
-    q: "OAuth 2.0 flow — how does it work?",
+    q: "How does the OAuth 2.0 flow work?",
     tags: ["advanced"],
     a: `// OAuth 2.0 = delegated authorization (login with Google/GitHub)
 
-// Roles: Resource Owner (user), Client (app), Auth Server (Google), Resource Server (API)
+// Roles: Resource Owner (user), Client (app), Auth Server, Resource Server
 
-// Authorization Code Flow (most common, most secure):
+// Authorization Code Flow (most secure):
 // 1. User clicks "Login with Google"
-// 2. App redirects to Google: ?client_id=...&redirect_uri=...&scope=...&response_type=code
+// 2. App redirects to Google with client_id, redirect_uri, scope
 // 3. User logs in, grants permission
-// 4. Google redirects back to app with ?code=AUTH_CODE
-// 5. Backend exchanges code for tokens: POST /token with client_secret
-// 6. Google returns: { access_token, refresh_token, id_token }
-// 7. App uses access_token to call Google APIs on behalf of the user
+// 4. Google redirects back with ?code=AUTH_CODE
+// 5. Backend exchanges code for tokens (with client_secret)
+// 6. Google returns { access_token, refresh_token, id_token }
+// 7. App uses access_token to call APIs on behalf of user
 
-// Implicit Flow (deprecated) — PKCE flow now recommended for SPAs
-// JWT as access token (self-contained, no DB lookup needed)`
+// Implicit Flow deprecated — PKCE now recommended for SPAs`
   },
 
   // ─── REAL-TIME ─────────────────────────────────────────────
   {
     category: "Real-Time",
-    q: "WebSockets vs Server-Sent Events (SSE) vs Polling",
+    q: "WebSockets vs Server-Sent Events vs Polling — comparison",
     tags: ["popular"],
-    a: `// POLLING (old way):
-// Client asks "any updates?" every N seconds
+    a: `// POLLING: client asks "any updates?" every N seconds
 // ✅ Simple, works everywhere
 // ❌ Wasted requests, latency = poll interval
 
-// SSE (Server-Sent Events) — one-directional (server → client):
-// ✅ Built-in browser support (EventSource API)
-// ✅ Auto-reconnect, simple, lightweight
-// ❌ No client→server via same connection
-// ❌ Limited to ~6 connections per browser
-// Use for: notifications, live feeds, stock tickers
+// SSE (Server-Sent Events) — server→client only:
+// ✅ Built-in (EventSource API), auto-reconnect, lightweight
+// ❌ No client→server on same connection, limited ~6 connections
+// Use: notifications, live feeds, stock tickers
 
-// WEBSOCKETS — full-duplex (bi-directional):
-// ✅ Real-time both ways
-// ✅ Efficient (persistent connection, minimal overhead)
-// ❌ Complex (need to handle reconnection, heartbeats)
-// Use for: chat, live collaboration, gaming, real-time dashboards
+// WEBSOCKETS — full-duplex:
+// ✅ Real-time both ways, persistent, minimal overhead
+// ❆ Complex (reconnection, heartbeats)
+// Use: chat, live collaboration, gaming, real-time dashboards
 
-// My experience: WebSockets via Socket.io for chat platform
-// (auto-reconnect, rooms, fallback to long-polling)`
+// My project: Socket.io for chat with auto-reconnect + rooms`
   },
   {
     category: "Real-Time",
-    q: "Socket.io — key features and why use it?",
+    q: "What is Socket.io and its key features?",
     tags: ["popular"],
-    a: `// Socket.io = WebSocket library with fallbacks and added features
+    a: `// Socket.io = WebSocket library with fallbacks and extras
 
 // Key features:
 // 1. Auto-reconnection — handles disconnects gracefully
-// 2. Rooms — broadcast to subsets of connected clients
-// 3. Namespaces — multiplex multiple channels on one connection
-// 4. Fallback — uses long-polling if WebSocket not available
+// 2. Rooms — broadcast to subsets of clients
+// 3. Namespaces — multiplex channels on one connection
+// 4. Fallback — long-polling when WebSocket unavailable
 // 5. Heartbeats — detects dead connections
 
 // Server:
 const io = require("socket.io")(server);
 io.on("connection", (socket) => {
-  console.log(\`Client connected: \${socket.id}\`);
-
-  socket.join("room-1"); // join a room
-  io.to("room-1").emit("message", data); // broadcast to room
-
-  socket.on("disconnect", () => console.log("Client left"));
+  socket.join("room-1");
+  io.to("room-1").emit("message", data);
 });
 
 // Client:
 const socket = io("http://localhost:3000");
-socket.emit("join", { room: "room-1" });
-socket.on("message", (data) => console.log(data));
-
-// My project: built enterprise real-time chat using Socket.io +
-// Firebase Realtime DB for message persistence`
+socket.on("message", (data) => console.log(data));`
   },
 
   // ─── STATE MANAGEMENT ──────────────────────────────────────
   {
     category: "State Management",
-    q: "Redux — core concepts and when to use it",
+    q: "Redux core concepts — when should you use it?",
     tags: ["popular"],
-    a: `// Redux core concepts:
-// STORE — holds the entire app state (single source of truth)
+    a: `// Redux core:
+// STORE — single source of truth for app state
 // ACTION — plain object describing "what happened"
 // REDUCER — pure function (prevState, action) → newState
 // DISPATCH — sends action to reducer
 // SELECTOR — reads/filters data from store
 
-// Basic example:
-// Action:
-{ type: "INCREMENT", payload: 1 }
+// Example:
+// Action: { type: "INCREMENT", payload: 1 }
 
 // Reducer:
 function counter(state = 0, action) {
@@ -1270,36 +1201,30 @@ function counter(state = 0, action) {
   }
 }
 
-// Store:
 const store = createStore(counter);
 store.dispatch({ type: "INCREMENT", payload: 1 });
 console.log(store.getState()); // 1
 
-// When to use Redux:
+// When to use:
 // - Complex state shared across many components
-// - State needs to be persisted + rehydrated
 // - Middleware for side effects (thunks/sagas)
 // - Time-travel debugging
 // Otherwise: useState + useContext is simpler
-
-// Modern: Redux Toolkit (RTK) — less boilerplate, built-in thunks`
+// Modern: Redux Toolkit (RTK) — less boilerplate`
   },
   {
     category: "State Management",
-    q: "Redux Toolkit vs Context API — comparison",
+    q: "Redux Toolkit vs Context API — which to choose",
     tags: ["popular"],
     a: `// Context API:
-// ✅ Built-in, no extra deps
-// ✅ Simple for small apps
-// ❌ Re-renders all consumers even if unrelated state changes
+// ✅ Built-in, no extra deps, simple for small apps
+// ❌ Re-renders all consumers on any state change
 // ❌ No devtools, no middleware
 
 // Redux Toolkit:
-// ✅ Predictable state updates (reducers)
-// ✅ Devtools (time-travel, action tracing)
-// ✅ Middleware (side effects: API calls, logging)
-// ✅ createSlice, createAsyncThunk reduce boilerplate
-// ✅ Optimized re-renders (useSelector tracks specific slices)
+// ✅ Predictable updates (reducers), devtools, middleware
+// ✅ createSlice + createAsyncThunk reduce boilerplate
+// ✅ Optimized re-renders (useSelector tracks slices)
 
 // RTK example:
 const userSlice = createSlice({
@@ -1310,34 +1235,29 @@ const userSlice = createSlice({
   }
 });
 
-// When to use each:
-// Context: theme, locale, simple auth state (low frequency)
-// Redux: complex forms, real-time data, normalized cache,
-//        multi-user collaboration features`
+// When:
+// Context: theme, locale, simple auth (low frequency)
+// Redux: complex forms, real-time data, normalized cache`
   },
 
   // ─── PERFORMANCE OPTIMIZATION ──────────────────────────────
   {
     category: "Performance Optimization",
-    q: "Core Web Vitals — LCP, FID/INP, CLS explained",
+    q: "Core Web Vitals — LCP, INP, CLS explained",
     tags: ["popular"],
-    a: `// Core Web Vitals = Google metrics for user experience
+    a: `// Core Web Vitals = Google UX metrics
 
-// LCP (Largest Contentful Paint) — loading performance
-// When does the main content load?
+// LCP (Largest Contentful Paint) — loading
 // Target: < 2.5s
 // Fix: optimize images, preload key resources, SSR, CDN
 
-// FID (First Input Delay) → INP (Interaction to Next Paint)
-// How responsive is the page to user input?
-// Target: < 100ms (INP)
-// Fix: code splitting, avoid long tasks, use web workers, debounce
+// INP (Interaction to Next Paint) — responsiveness
+// Target: < 100ms
+// Fix: code splitting, avoid long tasks, web workers
 
 // CLS (Cumulative Layout Shift) — visual stability
-// Does the page layout shift unexpectedly?
 // Target: < 0.1
-// Fix: set explicit width/height on images, avoid inserting content
-// above existing content, use fonts with size-adjust`
+// Fix: explicit width/height on images, avoid inserting above content`
   },
   {
     category: "Performance Optimization",
@@ -1345,7 +1265,6 @@ const userSlice = createSlice({
     tags: ["popular"],
     a: `// 1. CODE SPLITTING — load only what's needed
 React.lazy(() => import("./HeavyComponent"));
-// Webpack splits into separate chunks
 
 // 2. LAZY LOADING — images, below-fold content
 <img loading="lazy" src="..." />
@@ -1355,45 +1274,34 @@ IntersectionObserver for custom lazy loading
 React.memo, useMemo, useCallback
 
 // 4. BUNDLE OPTIMIZATION — tree shaking, minification
-// Analyze: webpack-bundle-analyzer
 
-// 5. CACHING:
-// Browser cache (Cache-Control headers)
-// Service Worker cache (workbox)
-// API response cache (Redis, CDN)
+// 5. CACHING — browser (Cache-Control), service worker, Redis, CDN
 
-// 6. IMAGE OPTIMIZATION:
-// WebP/AVIF format, responsive images (srcset), CDN
+// 6. IMAGE OPTIMIZATION — WebP/AVIF, srcset, CDN
 
-// 7. VIRTUALIZATION for long lists:
-// react-window, react-virtualized — only render visible items
+// 7. VIRTUALIZATION — react-window for long lists
 
-// 8. AVOID RENDER-BLOCKING resources:
-// async/defer on scripts, inline critical CSS`
+// 8. AVOID RENDER-BLOCKING — async/defer scripts, inline critical CSS`
   },
   {
     category: "Performance Optimization",
     q: "How does caching work at different layers?",
     tags: ["popular"],
-    a: `// Caching layers (from browser → server):
+    a: `// Caching layers (browser → server):
 
-// 1. Browser Cache (Service Worker / HTTP Cache):
+// 1. Browser Cache (Service Worker / HTTP):
 // Cache-Control: max-age=86400, public
-// ETag / Last-Modified headers for validation
+// ETag / Last-Modified for validation
 
-// 2. CDN Cache:
-// Cloudflare, Akamai, AWS CloudFront
-// Edge locations serve cached assets close to user
-// Cache-Control: s-maxage=86400
+// 2. CDN Cache: Cloudflare, CloudFront
+// Edge locations near user, s-maxage header
 
-// 3. Application Cache (In-memory / Redis):
-// Store computed results, session data, DB query results
-// Invalidate on update (cache-aside pattern)
+// 3. Application Cache (Redis / in-memory):
+// Store computed results, session data, DB queries
 
-// 4. Database Cache:
-// Query cache, buffer pool, connection pooling
+// 4. Database Cache: query cache, buffer pool, connection pooling
 
-// Cache-Aside Pattern (most common):
+// Cache-Aside Pattern:
 async function getData(key) {
   let data = await cache.get(key);
   if (!data) {
@@ -1401,9 +1309,7 @@ async function getData(key) {
     await cache.set(key, data, { EX: 3600 });
   }
   return data;
-}
-
-// My experience: Reduced backend response by 50% using Redis caching`
+}`
   },
 
   // ─── VERSION CONTROL & DEVOPS ──────────────────────────────
@@ -1411,46 +1317,40 @@ async function getData(key) {
     category: "Version Control & DevOps",
     q: "Git branching strategies — Git Flow vs GitHub Flow",
     tags: ["popular"],
-    a: `// GIT FLOW (older, complex):
-// main → production-ready
-// develop → integration branch
-// feature/* → new features (branched from develop)
-// release/* → preparing release (branched from develop → merges to main + develop)
-// hotfix/* → urgent fixes (branched from main → merges to main + develop)
-// ✅ Good for: scheduled releases, complex projects
-// ❌ Overhead: many branches, heavy ceremony
+    a: `// GIT FLOW (complex, older):
+// main → production, develop → integration
+// feature/* → new features, release/* → prep releases
+// hotfix/* → urgent fixes (from main)
+// ✅ Scheduled releases, complex projects
+// ❌ Heavy ceremony, many branches
 
-// GITHUB FLOW (simpler, modern):
+// GITHUB FLOW (simpler):
 // main → always deployable
-// feature branches → branch off main, PR to main when done
-// ✅ Simple, continuous deployment friendly
-// ✅ Perfect for: SaaS, small teams, CI/CD
+// feature branches → PR to main when done
+// ✅ Simple, CI/CD friendly, small teams
 
-// TRUNK-BASED DEVELOPMENT (CI/CD ideal):
-// Short-lived feature branches (hours, not days)
-// Frequent merges to main (multiple times/day)
-// Feature flags to hide incomplete features
-
-// For Accenture: likely Git Flow or GitHub Flow depending on project`
+// TRUNK-BASED:
+// Short-lived branches (hours), frequent merges to main
+// Feature flags for incomplete work
+// Ideal for CI/CD`
   },
   {
     category: "Version Control & DevOps",
-    q: "CI/CD Pipeline — what stages should it have?",
+    q: "What stages should a CI/CD pipeline include?",
     tags: ["popular"],
     a: `// CI/CD = Continuous Integration / Continuous Deployment
 
 // Pipeline stages:
-// 1. CODE → developer pushes to branch
-// 2. BUILD → compile/transpile dependencies
-// 3. LINT → code quality checks (ESLint, Prettier)
-// 4. TEST → unit tests, integration tests
+// 1. CODE → developer pushes
+// 2. BUILD → compile/dependencies
+// 3. LINT → code quality (ESLint)
+// 4. TEST → unit + integration tests
 // 5. BUILD → production build
-// 6. DEPLOY → deploy to staging
-// 7. E2E → end-to-end tests on staging
-// 8. DEPLOY → deploy to production (if all checks pass)
+// 6. DEPLOY → staging
+// 7. E2E → end-to-end tests
+// 8. DEPLOY → production
 
 // GitHub Actions example:
-// .github/workflows/ci.yml
 name: CI
 on: [push, pull_request]
 jobs:
@@ -1463,10 +1363,7 @@ jobs:
       - run: npm test
       - run: npm run build
 
-// Key principles:
-// - Fail fast (fail at first error)
-// - Immutable artifacts (build once, deploy many)
-// - Environment parity (dev ≈ staging ≈ prod)`
+// Key: fail fast, immutable artifacts, environment parity`
   },
 
   // ─── SYSTEM DESIGN ────────────────────────────────────────
@@ -1477,48 +1374,38 @@ jobs:
     a: `// Requirements: 1-on-1 chat, group chat, presence, push notifications
 
 // Architecture:
-// 1. Load Balancer (NGINX / HAProxy) → distributes connections
-// 2. WebSocket Servers (Node.js + Socket.io) — horizontal scale
-// 3. Redis Pub/Sub — broadcast messages across WebSocket servers
-// 4. Message Queue (RabbitMQ / Kafka) — async message processing
-// 5. Database:
-//    - MongoDB/Firebase for messages (high write throughput)
-//    - PostgreSQL for user data (relationships)
-// 6. Cache (Redis):
-//    - Online presence (key: userId, value: socketId, TTL)
-//    - Recent messages (last 50 per chat)
+// 1. Load Balancer (NGINX) → distribute connections
+// 2. WebSocket Servers (Node + Socket.io) — horizontal scale
+// 3. Redis Pub/Sub — broadcast across WS servers
+// 4. Message Queue (RabbitMQ/Kafka) — async processing
+// 5. Database: MongoDB for messages, PostgreSQL for users
+// 6. Cache (Redis): online presence, recent messages
 
 // Message flow:
 // User A → WS Server 1 → Redis Pub/Sub → WS Server 2 → User B
-// WS Server 1 → Message Queue → DB write
 
-// My experience: Built multi-tenant real-time chat with React + Firebase
-// + Service Workers for push notifications. 1000+ active users.`
+// My project: multi-tenant chat with React + Firebase, 1000+ users`
   },
   {
     category: "System Design",
-    q: "Microservices vs Monolith — when to choose each?",
+    q: "Microservices vs Monolith — when to choose each",
     tags: ["popular", "system-design"],
     a: `// MONOLITH — single deployable unit
-// ✅ Simpler development, deployment, debugging
-// ✅ Single database, no network overhead
-// ✅ Easier transactions (ACID)
-// ❌ Scales vertically only (bigger server)
-// ❌ Long-term: codebase becomes hard to maintain
+// ✅ Simpler dev, deploy, debug
+// ✅ Single DB, no network overhead, ACID easy
+// ❌ Scales vertically only, codebase gets messy
 
-// MICROSERVICES — independently deployable services
+// MICROSERVICES — independently deployable
 // ✅ Independent scaling, deployment, tech stacks
-// ✅ Fault isolation (one service failure ≠ all fail)
-// ✅ Team autonomy (each team owns a service)
-// ❌ Complex: network calls, distributed transactions, service discovery
-// ❌ Debugging across services is hard
+// ✅ Fault isolation, team autonomy
+// ❌ Complex: network calls, distributed transactions, debugging
 
 // When to choose:
 // START with monolith! Split only when:
-// - The codebase is too large for a team to manage
-// - Different parts need to scale independently
-// - Different teams need to work independently
-// - One part needs a different tech stack`
+// - Codebase too large for team to manage
+// - Different parts need independent scaling
+// - Different teams need autonomy
+// - One part needs different tech stack`
   },
 
   // ─── TESTING ───────────────────────────────────────────────
@@ -1526,48 +1413,44 @@ jobs:
     category: "Testing",
     q: "Unit vs Integration vs E2E testing — differences",
     tags: ["popular"],
-    a: `// UNIT TESTING — test individual functions/components in isolation
+    a: `// UNIT TESTING — test individual functions in isolation
 // Fast, runs on every commit, high coverage
 // Tools: Jest, Vitest, Mocha
 test("adds 1 + 2 = 3", () => {
   expect(add(1, 2)).toBe(3);
 });
 
-// INTEGRATION TESTING — test how modules work together
-// Medium speed, tests API endpoints + DB interactions
-// Tools: supertest (HTTP), React Testing Library
+// INTEGRATION TESTING — test modules working together
+// Medium speed, tests API + DB interactions
+// Tools: supertest, React Testing Library
 test("GET /api/users returns list", async () => {
   const res = await request(app).get("/api/users");
   expect(res.status).toBe(200);
-  expect(res.body).toBeInstanceOf(Array);
 });
 
-// E2E TESTING — test user flows in a real browser
-// Slow, few critical paths, expensive to maintain
-// Tools: Cypress, Playwright, Selenium
+// E2E TESTING — test user flows in real browser
+// Slow, few critical paths
+// Tools: Cypress, Playwright
 cy.visit("/login");
 cy.get("[data-test=email]").type("user@test.com");
-cy.get("[data-test=password]").type("password");
 cy.get("[data-test=submit]").click();
 cy.url().should("include", "/dashboard");
 
-// Testing Trophy (not pyramid):
-// Most effort on Integration > Static analysis > Unit > E2E`
+// Testing Trophy: Integration > Static > Unit > E2E`
   },
   {
     category: "Testing",
-    q: "React Testing Library — how do you test components?",
+    q: "How do you test React components with Testing Library?",
     tags: ["react"],
-    a: `// RTL encourages testing user behavior, not implementation details
+    a: `// RTL encourages testing user behavior, not implementation
 
 // Basic component test:
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 test("counter increments on click", async () => {
   render(<Counter />);
   const button = screen.getByRole("button", { name: /increment/i });
-
   await userEvent.click(button);
   expect(screen.getByText("Count: 1")).toBeInTheDocument();
 });
@@ -1580,7 +1463,7 @@ test("loads user data", async () => {
 });
 
 // Query priority:
-// 1. getByRole (accessibility-first)
+// 1. getByRole (accessibility)
 // 2. getByLabelText (form labels)
 // 3. getByPlaceholderText
 // 4. getByText
@@ -1590,31 +1473,29 @@ test("loads user data", async () => {
   // ─── AGILE / SCRUM ─────────────────────────────────────────
   {
     category: "Agile / Scrum",
-    q: "Scrum ceremonies and roles — explain briefly",
+    q: "Scrum ceremonies and roles — brief explanation",
     tags: ["popular"],
     a: `// Roles:
 // Product Owner — defines features, prioritizes backlog
 // Scrum Master — coaches team, removes blockers
-// Development Team — builds the product (cross-functional, self-organizing)
+// Dev Team — builds product (cross-functional, self-organizing)
 
 // Ceremonies:
-// 1. SPRINT PLANNING — team commits to work for the sprint (2 weeks)
+// 1. SPRINT PLANNING — commit to work for sprint (2 weeks)
 // 2. DAILY STANDUP — what I did, what I'll do, blockers (15 min)
-// 3. SPRINT REVIEW — demo completed work to stakeholders
-// 4. SPRINT RETROSPECTIVE — reflect on what went well/what to improve
+// 3. SPRINT REVIEW — demo to stakeholders
+// 4. SPRINT RETRO — reflect on what went well/improve
 
 // Artifacts:
-// Product Backlog — prioritized list of features
-// Sprint Backlog — items committed for current sprint
-// Increment — potentially shippable product at end of sprint
-
-// My experience: daily standups, 2-week sprints, JIRA for tracking`
+// Product Backlog — prioritized features
+// Sprint Backlog — current sprint items
+// Increment — potentially shippable product`
   },
 
   // ─── CODING CHALLENGES ──────────────────────────────────────
   {
     category: "Coding Challenges",
-    q: "Reverse a string",
+    q: "Reverse a string — write a function",
     tags: ["popular", "accenture"],
     a: `function reverseStr(str) {
   return str.split("").reverse().join("");
@@ -1647,7 +1528,7 @@ console.log(findDuplicates([1,2,3,2,4,3,5])); // [2, 3]`
   },
   {
     category: "Coding Challenges",
-    q: "Flatten a nested array",
+    q: "Flatten a nested array — implement",
     tags: ["popular", "accenture"],
     a: `function flatten(arr) {
   return arr.reduce((acc, item) =>
@@ -1683,7 +1564,7 @@ console.log(isPalindrome("A man, a plan, a canal: Panama")); // true`
   },
   {
     category: "Coding Challenges",
-    q: "FizzBuzz",
+    q: "FizzBuzz — implement the classic problem",
     tags: ["popular", "accenture"],
     a: `function fizzBuzz(n) {
   for (let i = 1; i <= n; i++) {
@@ -1697,16 +1578,14 @@ console.log(isPalindrome("A man, a plan, a canal: Panama")); // true`
 fizzBuzz(15);
 // Output: 1, 2, Fizz, 4, Buzz, Fizz, 7, 8, Fizz, Buzz, 11, Fizz, 13, 14, FizzBuzz
 
-// One-liner (returns array instead of logging):
+// One-liner:
 const fb = (n) => Array.from({length: n}, (_, i) =>
   (++i % 3 ? "" : "Fizz") + (i % 5 ? "" : "Buzz") || i
-);
-console.log(fb(15));
-// Output: [1, 2, "Fizz", 4, "Buzz", "Fizz", 7, 8, "Fizz", "Buzz", 11, "Fizz", 13, 14, "FizzBuzz"]`
+);`
   },
   {
     category: "Coding Challenges",
-    q: "Find missing number in an array of 1..n",
+    q: "Find missing number in array of 1..n",
     tags: ["popular", "accenture"],
     a: `function findMissing(arr) {
   const n = arr.length + 1;
@@ -1748,7 +1627,7 @@ console.log(removeFalsy([0, 1, false, 2, "", 3, null, undefined, NaN, 4]));
   },
   {
     category: "Coding Challenges",
-    q: "Deep clone an object (manual implementation)",
+    q: "Deep clone an object — manual implementation",
     tags: ["advanced"],
     a: `function deepClone(obj, seen = new WeakMap()) {
   if (obj === null || typeof obj !== "object") return obj;
@@ -1765,11 +1644,10 @@ console.log(removeFalsy([0, 1, false, 2, "", 3, null, undefined, NaN, 4]));
   return copy;
 }
 
-// Usage:
 const original = { a: 1, b: { c: [1, 2], d: new Date() } };
 const cloned = deepClone(original);
 cloned.b.c.push(3);
-console.log(original.b.c); // [1, 2] — original unchanged (deep copy works)
+console.log(original.b.c); // [1, 2] — original unchanged
 console.log(cloned.b.c);   // [1, 2, 3]
 
 // Modern: structuredClone(obj) — built-in`
@@ -1797,7 +1675,7 @@ myPromiseAll([Promise.resolve(1), Promise.resolve(2)]).then(console.log);`
   },
   {
     category: "Coding Challenges",
-    q: "Implement debounce function",
+    q: "Implement a debounce function",
     tags: ["popular", "accenture"],
     a: `function debounce(fn, delay, immediate = false) {
   let timer = null;
@@ -1812,11 +1690,8 @@ myPromiseAll([Promise.resolve(1), Promise.resolve(2)]).then(console.log);`
   };
 }
 
-// Usage example:
-const log = debounce((msg) => console.log(msg), 200);
-log("Hello");             // scheduled
-log("World");             // cancelled previous, scheduled again
-// After 200ms of no calls → Output: "World" (only the last call fires)`
+// Usage: const log = debounce((msg) => console.log(msg), 200);
+// Only last call fires after 200ms of no triggers`
   },
   {
     category: "Coding Challenges",
@@ -1849,7 +1724,7 @@ console.log(isAnagram("hello", "world"));   // false`
   for (let right = 0; right < s.length; right++) {
     const ch = s[right];
     if (seen.has(ch) && seen.get(ch) >= left) {
-      left = seen.get(ch) + 1; // move left past the duplicate
+      left = seen.get(ch) + 1;
     }
     seen.set(ch, right);
     maxLen = Math.max(maxLen, right - left + 1);
@@ -1862,17 +1737,15 @@ console.log(lengthOfLongestSubstring("bbbbb"));    // 1 ("b")`
   },
   {
     category: "Coding Challenges",
-    q: "Group anagrams together",
+    q: "Group anagrams — efficient solution",
     tags: ["accenture", "advanced"],
     a: `function groupAnagrams(strs) {
   const map = new Map();
-
   for (const str of strs) {
     const sorted = str.split("").sort().join("");
     if (!map.has(sorted)) map.set(sorted, []);
     map.get(sorted).push(str);
   }
-
   return [...map.values()];
 }
 
@@ -1886,7 +1759,7 @@ console.log(groupAnagrams(["eat","tea","tan","ate","nat","bat"]));
     q: "console.log(0.1 + 0.2 === 0.3) — what prints?",
     tags: ["accenture", "popular"],
     a: `// Output: false
-// IEEE 754 floating point: 0.1 + 0.2 = 0.30000000000000004
+// IEEE 754: 0.1 + 0.2 = 0.30000000000000004
 console.log(0.1 + 0.2 === 0.3); // false
 console.log(Math.abs(0.1 + 0.2 - 0.3) < Number.EPSILON); // true — fix`
   },
@@ -1895,40 +1768,34 @@ console.log(Math.abs(0.1 + 0.2 - 0.3) < Number.EPSILON); // true — fix`
     q: "console.log(typeof NaN) — what prints?",
     tags: ["accenture", "popular"],
     a: `// Output: "number"
-// NaN is a Number type (despite "Not-a-Number")
+// NaN is type Number (despite "Not-a-Number")
 console.log(typeof NaN);     // "number"
-console.log(NaN === NaN);    // false — NaN is not equal to itself
+console.log(NaN === NaN);    // false — NaN not equal to itself
 console.log(Number.isNaN(NaN)); // true — correct check`
   },
   {
     category: "Output Prediction",
-    q: "console.log([] == ![]) — what prints?",
+    q: "console.log([] == ![]) — what prints and why?",
     tags: ["accenture", "popular"],
     a: `// Output: true
-// Step coercion:
-// ![] → false (array is truthy, negated → false)
-// [] == false → "" == false → 0 == 0 → true
+// Step coercion: ![] → false, [] == false → "" == false → 0 == 0 → true
 console.log([] == ![]);  // true
 console.log([] === ![]); // false`
   },
   {
     category: "Output Prediction",
-    q: "console.log(1 + '2' + '2') — what prints?",
+    q: "console.log(1 + '2' + '2') — output?",
     tags: ["accenture"],
     a: `// Output: "122"
-// First + with string → concatenation
-// 1 + "2" → "12"
-// "12" + "2" → "122"
+// 1 + "2" → "12" (string concat), "12" + "2" → "122"
 console.log(1 + "2" + "2"); // "122"`
   },
   {
     category: "Output Prediction",
-    q: "console.log(1 + +'2' + '2') — what prints?",
+    q: "console.log(1 + +'2' + '2') — output?",
     tags: ["accenture"],
     a: `// Output: "32"
-// +'2' → 2 (unary plus → number)
-// 1 + 2 → 3
-// 3 + "2" → "32"
+// +"2" → 2 (unary plus), 1 + 2 → 3, 3 + "2" → "32"
 console.log(1 + +"2" + "2"); // "32"`
   },
   {
@@ -1936,18 +1803,16 @@ console.log(1 + +"2" + "2"); // "32"`
     q: "console.log(3 > 2 > 1) — what prints?",
     tags: ["accenture", "popular"],
     a: `// Output: false
-// 3 > 2 → true
-// true > 1 → 1 > 1 → false (true coerced to 1)
+// 3 > 2 → true, true > 1 → 1 > 1 → false
 console.log(3 > 2 > 1); // false
 // Correct: (3 > 2 && 2 > 1) → true`
   },
   {
     category: "Output Prediction",
-    q: "console.log(typeof typeof 1) — what prints?",
+    q: "console.log(typeof typeof 1) — output?",
     tags: ["accenture"],
     a: `// Output: "string"
-// typeof 1 → "number"
-// typeof "number" → "string"
+// typeof 1 → "number", typeof "number" → "string"
 console.log(typeof typeof 1); // "string"`
   },
   {
@@ -1955,23 +1820,21 @@ console.log(typeof typeof 1); // "string"`
     q: "[1, 2, 3].map(parseInt) — what does this return?",
     tags: ["accenture", "popular"],
     a: `// Output: [1, NaN, NaN]
-// map passes (element, index, array) to parseInt
-// parseInt(1, 0) → 1   (radix 0 = default 10)
-// parseInt(2, 1) → NaN  (radix 1 invalid)
-// parseInt(3, 2) → NaN  (binary can't have 3)
+// map passes (element, index) to parseInt
+// parseInt(1, 0) → 1, parseInt(2, 1) → NaN, parseInt(3, 2) → NaN
 
 // Fix:
 console.log([1,2,3].map(num => parseInt(num))); // [1, 2, 3]
-// or: .map(Number)`
+// or .map(Number)`
   },
   {
     category: "Output Prediction",
-    q: "Closure loop output? for(var i... setTimeout...)",
+    q: "Closure loop — for(var i...) with setTimeout output?",
     tags: ["popular", "accenture"],
     a: `for (var i = 0; i < 3; i++) {
   setTimeout(() => console.log(i), 100);
 }
-// Output: 3, 3, 3 (all share same 'i')
+// Output: 3, 3, 3 (all share same i)
 
 // Fix 1: let (block scoped)
 for (let i = 0; i < 3; i++) {
@@ -1987,18 +1850,16 @@ for (var i = 0; i < 3; i++) {
   },
   {
     category: "Output Prediction",
-    q: "console.log(1 && 2 || 0 && 3) — what prints?",
+    q: "console.log(1 && 2 || 0 && 3) — output?",
     tags: ["accenture"],
     a: `// Output: 2
-// && has higher precedence than ||
-// 1 && 2 → 2
-// 0 && 3 → 0 (short-circuit)
-// 2 || 0 → 2 (short-circuit)
+// && higher precedence than ||
+// 1 && 2 → 2, 0 && 3 → 0, 2 || 0 → 2
 console.log(1 && 2 || 0 && 3); // 2`
   },
   {
     category: "Output Prediction",
-    q: "console.log('5' - 3) and console.log('5' + 3) — what prints?",
+    q: "console.log('5' - 3) vs console.log('5' + 3) — outputs?",
     tags: ["accenture"],
     a: `// Output: 2, "53", 10, NaN
 console.log("5" - 3); // 2  (subtraction → numeric coercion)
@@ -2015,7 +1876,6 @@ console.log("hello" - 1); // NaN`
 // 2. 'this' in functions = undefined (not window)
 // 3. No duplicate params
 // 4. Cannot delete variables
-// 5. No with() statement
 
 "use strict";
 x = 3.14; // ReferenceError
@@ -2027,84 +1887,79 @@ function show() {
   },
   {
     category: "Output Prediction",
-    q: "console.log([] + {}) and console.log({} + []) — what prints?",
+    q: "console.log([] + {}) vs console.log({} + []) — outputs?",
     tags: ["accenture", "advanced"],
     a: `// Output: "[object Object]" (both cases)
 console.log([] + {}); // "[object Object]"
 // [].toString() = "" + {}.toString() = "[object Object]"
 
 console.log({} + []); // "[object Object]"
-// (or 0 in some contexts — {} is treated as block, +[] = 0)`
+// (or 0 in some contexts — {} as block, +[] = 0)`
   },
 
   // ─── HR & GENERAL ───────────────────────────────────────────
   {
     category: "HR & General",
-    q: "Tell me about yourself (self-introduction)",
+    q: "Tell me about yourself — self-introduction",
     tags: ["accenture"],
-    a: `// Structure: Present → Past → Future (tailor to your resume)
+    a: `// Structure: Present → Past → Future (tailor to resume)
 
 "I'm Saurabh Dhull, a Senior Full Stack Developer with 3+ years
-of experience building scalable SaaS platforms, real-time
-communication systems, and AI-powered applications.
+building scalable SaaS, real-time communication systems, and
+AI-powered applications. I specialize in React, Next.js, Node.js,
+Firebase, Redis, and multi-tenant architecture.
 
-I specialize in React.js, Next.js, Node.js, and have strong
-experience with Firebase, Redis, and multi-tenant architecture.
-I've delivered systems supporting 1000+ active users and
-improved backend response times by 50% through Redis caching.
+I've delivered systems supporting 1000+ active users and reduced
+backend response times by 50% through Redis caching.
 
-I'm excited about this opportunity at Accenture because I want
-to work on large-scale enterprise projects and continue growing
-as a software engineer in a globally renowned organization."`
+I'm excited about this opportunity because I want to work on
+large-scale enterprise projects and continue growing at a
+globally renowned organization."`
   },
   {
     category: "HR & General",
     q: "What are your strengths and weaknesses?",
     tags: ["accenture"],
     a: `// STRENGTHS (from resume):
-// - Performance optimization (reduced response times by 50%)
-// - AI integration (built AI-powered workflow systems)
-// - Full-stack capability (React + Node + databases)
-// - Real-time systems (chat platforms, 1000+ users)
+// - Performance optimization (50% faster response)
+// - AI integration (AI-powered workflow systems)
+// - Full-stack capability (React + Node + DB)
+// - Real-time systems (chat, 1000+ users)
 
 // WEAKNESS:
 "Sometimes I take too much ownership and hesitate to delegate.
-I've been actively improving by trusting my team more and
-focusing on enabling others rather than doing everything myself."`
+I'm actively improving by trusting my team more and enabling
+others rather than doing everything myself."`
   },
   {
     category: "HR & General",
     q: "Why do you want to work at Accenture?",
     tags: ["accenture"],
-    a: `"Accenture offers exposure to cutting-edge technologies and
-large-scale enterprise projects across multiple domains.
-I'm drawn to the continuous learning culture and the
-opportunity to work with global teams solving complex
-business problems. The emphasis on innovation and professional
-development aligns perfectly with my career goals."`
+    a: `"Accenture offers exposure to cutting-edge tech and large-scale
+enterprise projects across multiple domains. I'm drawn to the
+continuous learning culture and the opportunity to work with
+global teams solving complex business problems."`
   },
   {
     category: "HR & General",
     q: "Where do you see yourself in 5 years?",
     tags: ["accenture"],
-    a: `"In 1-2 years, I see myself mastering Accenture's tech stack
-and contributing at a high level. In 3-5 years, I aspire to
-take on technical leadership — mentoring junior developers,
-leading architecture decisions, and becoming a trusted SME
-in modern web technologies. I want to grow into a Senior
-or Lead Developer role within Accenture."`
+    a: `"In 1-2 years, mastering Accenture's tech stack and contributing
+at a high level. In 3-5 years, taking on technical leadership —
+mentoring juniors, leading architecture, and becoming an SME
+in modern web technologies. I want to grow into a Senior or
+Lead Developer role."`
   },
   {
     category: "HR & General",
     q: "Why should we hire you?",
     tags: ["accenture"],
     a: `"You should hire me because I combine strong technical skills
-with real-world delivery experience. I've built AI-powered
-systems, real-time communication platforms, and mobile CRM
-solutions — all serving 1000+ users with high performance.
-I write clean, maintainable code, I'm passionate about
-learning, and I'm looking for a long-term career where I
-can make an impact from day one."`
+with real-world delivery. I've built AI-powered systems,
+real-time communication platforms, and mobile CRM solutions
+— all serving 1000+ users with high performance. I write
+clean code, I'm passionate about learning, and I'm looking
+for a long-term career where I can make an impact day one."`
   },
   {
     category: "HR & General",
@@ -2114,25 +1969,24 @@ can make an impact from day one."`
 
 "My most challenging project was an enterprise real-time chat
 platform serving 1000+ active users across multiple tenants.
-We needed live messaging, presence tracking, push notifications,
-and role-based access — all with sub-100ms latency.
+We needed live messaging, presence, push notifications, and
+RBAC — all with sub-100ms latency.
 
-I led the frontend architecture using React.js integrated with
-Firebase Realtime Database for live sync, and built Service
-Workers for push notifications. On the backend, I implemented
-multi-tenant data isolation and session management.
+I led frontend architecture with React + Firebase Realtime DB,
+built Service Workers for push notifications, and implemented
+multi-tenant data isolation.
 
-The result: a fully functional communication platform with
-reliable real-time updates, 50% reduction in backend response
-times through Redis caching, and successful adoption by users."`
+Result: fully functional communication platform with reliable
+real-time updates and 50% reduction in backend response times
+through Redis caching."`
   },
 
   // ─── ADVANCED / MISC ───────────────────────────────────────
   {
     category: "Advanced / Misc",
-    q: "Service Workers — what are they used for?",
+    q: "What are Service Workers used for?",
     tags: ["advanced"],
-    a: `// Service Worker = script running in background (separate thread)
+    a: `// Service Worker = background script (separate thread)
 // Acts as programmable network proxy
 
 // Use cases:
@@ -2146,9 +2000,9 @@ times through Redis caching, and successful adoption by users."`
   },
   {
     category: "Advanced / Misc",
-    q: "Web Workers vs Service Workers",
+    q: "Web Workers vs Service Workers — differences",
     tags: ["advanced"],
-    a: `// Web Worker: CPU-intensive tasks in background thread
+    a: `// Web Worker: CPU tasks in background thread
 // - postMessage communication
 // - Heavy calculations, data parsing, image processing
 // - Lives for page lifetime
@@ -2160,10 +2014,10 @@ times through Redis caching, and successful adoption by users."`
   },
   {
     category: "Advanced / Misc",
-    q: "CORS — what is it and how do you fix it?",
+    q: "What is CORS and how do you fix it?",
     tags: ["popular"],
     a: `// CORS = Cross-Origin Resource Sharing
-// Browser blocks requests from different origin (protocol + domain + port)
+// Browser blocks requests from different origin (protocol+domain+port)
 
 // Server must send headers:
 Access-Control-Allow-Origin: https://yourdomain.com
@@ -2171,15 +2025,15 @@ Access-Control-Allow-Methods: GET, POST, PUT, DELETE
 Access-Control-Allow-Headers: Content-Type, Authorization
 
 // Preflight (OPTIONS): sent before "non-simple" requests
-// Dev fix: proxy server (CORS-anywhere, or own backend proxy)`
+// Dev fix: proxy server (CORS-anywhere or backend proxy)`
   },
   {
     category: "Advanced / Misc",
-    q: "localStorage vs sessionStorage vs cookies",
+    q: "localStorage vs sessionStorage vs cookies — comparison",
     tags: ["popular", "accenture"],
-    a: `// localStorage:    persists until manually cleared, ~5-10MB, not sent to server
-// sessionStorage:  cleared when tab closes, ~5-10MB, not sent to server
-// cookies:         can be persistent, max 4KB, sent with every HTTP request
+    a: `// localStorage: persists until cleared, ~5-10MB, not sent to server
+// sessionStorage: cleared when tab closes, ~5-10MB, not sent to server
+// cookies: can persist, max 4KB, sent with every HTTP request
 
 localStorage.setItem("theme", "dark");
 console.log(localStorage.getItem("theme")); // "dark"
@@ -2189,27 +2043,22 @@ document.cookie = "token=abc; path=/; max-age=86400; HttpOnly; Secure; SameSite=
   },
   {
     category: "Advanced / Misc",
-    q: "Symbol type — what is it used for?",
+    q: "What is the Symbol type used for in JS?",
     tags: ["advanced"],
     a: `// Symbol = unique, immutable primitive (ES6)
-// Use: unique property keys, avoiding name collisions
+// Use: unique property keys, avoid name collisions
 
 const sym1 = Symbol("id");
 const sym2 = Symbol("id");
-console.log(sym1 === sym2); // false
+console.log(sym1 === sym2); // false — always unique
 
 const obj = { [sym1]: "secret", visible: "public" };
 console.log(Object.keys(obj)); // ["visible"]
-console.log(obj[sym1]); // "secret"
-
-// Well-known symbols:
-const arr = [1, 2, 3];
-const iter = arr[Symbol.iterator]();
-console.log(iter.next()); // { value: 1, done: false }`
+console.log(obj[sym1]); // "secret"`
   },
   {
     category: "Advanced / Misc",
-    q: "Proxy and Reflect — what are they?",
+    q: "What are Proxy and Reflect in JavaScript?",
     tags: ["advanced"],
     a: `// Proxy: intercepts object operations via "traps"
 // Reflect: provides default behavior methods
@@ -2225,74 +2074,70 @@ console.log(p.foo);  // "Not found!"`
   },
   {
     category: "Advanced / Misc",
-    q: "What is the difference between deep and shallow comparison in React?",
+    q: "Deep vs shallow comparison in React — what's the difference?",
     tags: ["react"],
-    a: `// Shallow comparison: compares references (===) — used by React.memo
-// Deep comparison: compares values recursively
+    a: `// Shallow: compares references (===) — used by React.memo
+// Deep: compares values recursively
 
 const a = { x: 1 };
 const b = { x: 1 };
 console.log(a === b); // false (different references)
 
-// React uses Object.is() for comparison (like === but NaN-safe)
-// What React.memo compares:
-prevProps === nextProps (shallow)
+// React.memo uses Object.is() (like ===, NaN-safe)
+// Inline objects/arrays in JSX create new refs every render:
+<Child data={{ x: 1 }} /> // new object each render — breaks memo
 
-// If you pass objects/arrays inline in JSX, they create new refs every render:
-<Child data={{ x: 1 }} /> // ❌ new object each render — breaks memo
-
-// Fix: memoize with useMemo / useCallback, or keep outside render`
+// Fix: memoize with useMemo/useCallback, or keep outside render`
   },
 
   // ─── NEW: CORE JS ──────────────────────────────────────────────
   {
     category: "Core JavaScript",
-    q: "Optional chaining (?.) and Nullish coalescing (??) — explain",
+    q: "Optional chaining (?.) and Nullish coalescing (??) explained",
     tags: ["popular"],
-    a: `// Optional chaining (?.) — safely access nested properties without error
+    a: `// Optional chaining (?.) — safe nested property access, no error on missing
 const user = { profile: { name: "John" } };
 console.log(user?.profile?.name);  // "John"
-console.log(user?.address?.city); // undefined (no error!)
+console.log(user?.address?.city); // undefined (no error)
 
-// Nullish coalescing (??) — returns RHS only when LHS is null/undefined
+// Nullish coalescing (??) — RHS only when LHS is null/undefined
 // Unlike || which treats all falsy values (0, '', false) as missing
 const score = 0;
-console.log(score || 100);  // 100  (0 is falsy)
-console.log(score ?? 100); // 0    (0 is NOT null/undefined)
+console.log(score || 100);  // 100 (0 is falsy)
+console.log(score ?? 100);  // 0   (0 is NOT null/undefined)
 
-// ?? vs ||:
 const name = "";
-console.log(name || "Guest");   // "Guest"  ("" is falsy)
-console.log(name ?? "Guest");   // ""       ("" is NOT null/undefined)`
+console.log(name || "Guest");   // "Guest"
+console.log(name ?? "Guest");   // ""`
   },
   {
     category: "Core JavaScript",
-    q: "Promise combinators — allSettled, race, any, all",
+    q: "Promise combinators — all, allSettled, race, any differences",
     tags: ["advanced"],
-    a: `// Promise.all — reject fast (fail on first rejection)
+    a: `// Promise.all — rejects fast on first rejection
 // Promise.allSettled — waits for ALL to settle (resolve or reject)
 // Promise.race — settles on first settled promise (resolve or reject)
-// Promise.any — settles on first FULFILLED (rejects only if ALL reject)
+// Promise.any — settles on first FULFILLED (rejects if ALL reject)
 
 const p1 = Promise.resolve(1);
 const p2 = Promise.reject("err");
 const p3 = new Promise(r => setTimeout(() => r(3), 100));
 
-// allSettled: waits for all, returns [{status, value/reason}, ...]
+// allSettled: returns [{status, value/reason}, ...]
 Promise.allSettled([p1, p2, p3]).then(console.log);
-// [{status:"fulfilled", value:1}, {status:"rejected", reason:"err"}, {status:"fulfilled", value:3}]
+// [{status:"fulfilled",value:1}, {status:"rejected",reason:"err"}, {status:"fulfilled",value:3}]
 
-// race: first settled wins (could be reject)
-Promise.race([p1, p3]).then(console.log); // 1 (p1 resolves first)
+// race: first settled wins (could reject)
+Promise.race([p1, p3]).then(console.log); // 1
 
 // any: first fulfilled wins (ignores rejects)
-Promise.any([p2, p3]).then(console.log); // 3 (p3 fulfills)
+Promise.any([p2, p3]).then(console.log); // 3
 
 // Note: Promise.any rejects with AggregateError if ALL reject`
   },
   {
     category: "Core JavaScript",
-    q: "Array.flat(), flatMap(), at() — what do they do?",
+    q: "Array flat(), flatMap(), at() — what do they do?",
     tags: ["popular"],
     a: `// flat(depth) — flattens nested arrays to specified depth
 const nested = [1, [2, [3]]];
@@ -2300,20 +2145,18 @@ console.log(nested.flat());       // [1, 2, [3]] (default depth = 1)
 console.log(nested.flat(2));      // [1, 2, 3]
 console.log(nested.flat(Infinity)); // [1, 2, 3]
 
-// flatMap — map + flat(1) in one pass (more efficient)
+// flatMap — map + flat(1) in one pass
 const arr = ["hello world", "foo bar"];
 console.log(arr.flatMap(s => s.split(" "))); // ["hello", "world", "foo", "bar"]
-// Same as: arr.map(s => s.split(" ")).flat()
 
-// at(index) — access element with negative indexing support
+// at(index) — access with negative indexing
 const nums = [10, 20, 30, 40];
-console.log(nums.at(-1));  // 40 (last element)
-console.log(nums.at(-2));  // 30 (second from last)
-// Without at: nums[nums.length - 1]`
+console.log(nums.at(-1));  // 40 (last)
+console.log(nums.at(-2));  // 30`
   },
   {
     category: "Core JavaScript",
-    q: "Object methods — fromEntries(), hasOwn(), entries(), values()",
+    q: "Useful Object methods — entries, values, fromEntries, hasOwn",
     tags: ["popular"],
     a: `// Object.entries(obj) → [[key, value], ...]
 // Object.values(obj) → [value, ...]
@@ -2322,48 +2165,45 @@ console.log(nums.at(-2));  // 30 (second from last)
 
 const user = { name: "John", age: 30 };
 
-// entries + fromEntries:
 const entries = Object.entries(user);
 console.log(entries); // [["name","John"], ["age",30]]
 
 const back = Object.fromEntries(entries);
 console.log(back); // {name: "John", age: 30}
 
-// Handy: filter object keys
+// Filter object keys using entries + fromEntries
 const filtered = Object.fromEntries(
   Object.entries(user).filter(([k]) => k !== "age")
 );
 console.log(filtered); // {name: "John"}
 
-// hasOwn — safer than hasOwnProperty (works for objects created with Object.create(null))
+// hasOwn — safer than hasOwnProperty (works with Object.create(null))
 console.log(Object.hasOwn(user, "name")); // true
-console.log(Object.hasOwn(user, "toString")); // false (prototype chain not checked)`
+console.log(Object.hasOwn(user, "toString")); // false`
   },
   {
     category: "Core JavaScript",
-    q: "Logical assignment operators (&&=, ||=, ??=)",
+    q: "Logical assignment operators — &&=, ||=, ??= explained",
     tags: ["popular", "advanced"],
-    a: `// Logical assignment combines logical operators with assignment
-// Introduced in ES2021
-
+    a: `// Logical assignment combines logical operators with assignment (ES2021)
 let a = 0, b = 5, c = null;
 
 // ||= — assigns if LHS is falsy
-a ||= 10;  // a = a || 10 → a = 10 (0 is falsy)
+a ||= 10;  // a = 10
 console.log(a); // 10
 
 // &&= — assigns if LHS is truthy
-b &&= 20;  // b = b && 20 → b = 20 (5 is truthy)
+b &&= 20;  // b = 20
 console.log(b); // 20
 
-// ??= — assigns if LHS is null/undefined (nullish)
-c ??= 30;  // c = c ?? 30 → c = 30
+// ??= — assigns if LHS is null/undefined
+c ??= 30;  // c = 30
 console.log(c); // 30
 
 // Practical: set defaults without overwriting valid falsy values
 let retries = 0;
-retries ||= 3;   // 0 is falsy → retries = 3 ❌ (wrong, 0 is valid)
-retries ??= 3;   // 0 is NOT nullish → retries stays 0 ✅`
+retries ??= 3;  // 0 is NOT nullish → stays 0 (correct)
+// retries ||= 3 would incorrectly set to 3`
   },
 
   // ─── NEW: CODING CHALLENGES ─────────────────────────────────────
@@ -2379,7 +2219,7 @@ retries ??= 3;   // 0 is NOT nullish → retries stays 0 ✅`
     if (ch in pairs) {
       if (stack.pop() !== pairs[ch]) return false;
     } else {
-      stack.push(ch); // opening bracket
+      stack.push(ch);
     }
   }
   return stack.length === 0;
@@ -2387,7 +2227,6 @@ retries ??= 3;   // 0 is NOT nullish → retries stays 0 ✅`
 
 console.log(isValid("()[]{}")); // true
 console.log(isValid("([)]"));   // false
-console.log(isValid("({[]})")); // true
 // O(n) time, O(n) space`
   },
   {
@@ -2396,7 +2235,6 @@ console.log(isValid("({[]})")); // true
     tags: ["popular", "accenture"],
     a: `function firstNonRepeating(s) {
   const count = {};
-
   for (const ch of s) count[ch] = (count[ch] || 0) + 1;
   for (let i = 0; i < s.length; i++) {
     if (count[s[i]] === 1) return i;
@@ -2406,11 +2244,11 @@ console.log(isValid("({[]})")); // true
 
 console.log(firstNonRepeating("leetcode")); // 0 (l)
 console.log(firstNonRepeating("aabb"));     // -1
-// O(n) time, O(1) space (limited charset)`
+// O(n) time, O(1) space`
   },
   {
     category: "Coding Challenges",
-    q: "Maximum subarray sum (Kadane's Algorithm)",
+    q: "Maximum subarray sum — Kadane's Algorithm",
     tags: ["popular", "accenture", "advanced"],
     a: `function maxSubArray(nums) {
   let maxSoFar = nums[0];
@@ -2423,7 +2261,7 @@ console.log(firstNonRepeating("aabb"));     // -1
   return maxSoFar;
 }
 
-console.log(maxSubArray([-2,1,-3,4,-1,2,1,-5,4])); // 6 (4 + -1 + 2 + 1)
+console.log(maxSubArray([-2,1,-3,4,-1,2,1,-5,4])); // 6
 // O(n) time, O(1) space`
   },
   {
@@ -2439,7 +2277,6 @@ console.log(maxSubArray([-2,1,-3,4,-1,2,1,-5,4])); // 6 (4 + -1 + 2 + 1)
     else result.push(arr2[j++]);
   }
 
-  // Add remaining elements
   while (i < arr1.length) result.push(arr1[i++]);
   while (j < arr2.length) result.push(arr2[j++]);
 
@@ -2461,87 +2298,74 @@ console.log(mergeSorted([1, 3, 5], [2, 4, 6])); // [1, 2, 3, 4, 5, 6]
 console.log(areRotations("abcde", "cdeab")); // true
 console.log(areRotations("abcde", "abced")); // false
 
-// Explanation: if s2 is a rotation of s1, then s2 will be a substring of s1+s1
-// "abcdeabcde" includes "cdeab" ✓`
+// If s2 is a rotation of s1, s2 is always a substring of s1+s1`
   },
 
   // ─── NEW: OUTPUT PREDICTION ─────────────────────────────────────
   {
     category: "Output Prediction",
-    q: "console.log(true + false) — what prints?",
+    q: "console.log(true + false) — output?",
     tags: ["accenture", "popular"],
     a: `// Output: 1
-// true coerces to 1, false coerces to 0
+// true → 1, false → 0
 console.log(true + false); // 1
-console.log(true + true);  // 2
-console.log(false + false);// 0
-console.log(true - false); // 1`
+console.log(true + true);  // 2`
   },
   {
     category: "Output Prediction",
-    q: "console.log(!!'false' == !!'true') — what prints?",
+    q: "console.log(!!'false' == !!'true') — output?",
     tags: ["accenture", "popular"],
     a: `// Output: true
-// !!"false" → !(!true) → !(false) → true (non-empty string is truthy)
-// !!"true"  → !(!true) → !(false) → true
-// true == true → true
-console.log(!!"false" == !!"true"); // true
-
-// Note: "false" as a STRING is truthy (only empty string "" is falsy)`
+// !!"false" = true (non-empty string is truthy)
+// !!"true" = true, true == true → true
+console.log(!!"false" == !!"true"); // true`
   },
   {
     category: "Output Prediction",
-    q: "console.log(0 || '' || 'Hello' || undefined) — what prints?",
+    q: "console.log(0 || '' || 'Hello' || undefined) — output?",
     tags: ["accenture"],
     a: `// Output: "Hello"
-// || returns the first TRUTHY value (or last falsy if all falsy)
-// 0 → falsy, "" → falsy, "Hello" → truthy → short-circuit
+// || returns first TRUTHY value (short-circuit)
+// 0→falsy, ""→falsy, "Hello"→truthy → stop
 console.log(0 || "" || "Hello" || undefined); // "Hello"
 
-// Opposite with &&:
-console.log(1 && "A" && null && "B"); // null (first falsy)`
+// && returns first FALSY:
+console.log(1 && "A" && null && "B"); // null`
   },
   {
     category: "Output Prediction",
-    q: "console.log([...'hello']) — what prints?",
+    q: "console.log([...'hello']) — output?",
     tags: ["accenture", "popular"],
     a: `// Output: ["h", "e", "l", "l", "o"]
-// Spread operator on string iterates over characters
+// Spread on string iterates characters
 console.log([..."hello"]); // ["h", "e", "l", "l", "o"]
 
-// Also works with Set, Map, NodeList, etc.
-console.log([..."😀👍"]); // ["😀", "👍"] (handles emoji correctly)
-// vs .split("") which may break with emoji`
+// Works with emoji too:
+console.log([..."😀👍"]); // ["😀", "👍"]`
   },
   {
     category: "Output Prediction",
-    q: "console.log(3 + 4 + '5') — what prints?",
+    q: "console.log(3 + 4 + '5') — output?",
     tags: ["accenture"],
     a: `// Output: "75"
-// Left-to-right evaluation: 3 + 4 = 7, then 7 + "5" = "75"
+// Left-to-right: 3 + 4 = 7, then 7 + "5" = "75"
 console.log(3 + 4 + "5"); // "75"
 
 // Compare:
-console.log("5" + 3 + 4); // "534" (string + number → concatenation)
-
-// To avoid: use parentheses or template literals
-console.log("" + (3 + 4) + "5"); // "75" but computed as number first`
+console.log("5" + 3 + 4); // "534"`
   },
   {
     category: "Output Prediction",
-    q: "console.log(Number.isNaN(NaN)) vs console.log(isNaN(NaN))",
+    q: "isNaN vs Number.isNaN — what's the difference?",
     tags: ["accenture"],
-    a: `// Output: true, true, true, false, true, false
-console.log(Number.isNaN(NaN));  // true — strict (only true for NaN)
+    a: `// Output: true, true, true, false
+console.log(Number.isNaN(NaN));  // true — strict (only NaN)
 console.log(isNaN(NaN));         // true — coerces first
 
-console.log(isNaN("hello"));         // true — "hello" coerces to NaN
-console.log(Number.isNaN("hello"));  // false — does NOT coerce
+console.log(isNaN("hello"));         // true — coerces to NaN
+console.log(Number.isNaN("hello"));  // false — no coercion
 
-console.log(isNaN(undefined));    // true
-console.log(Number.isNaN(undefined)); // false
-
-// Rule: use Number.isNaN() for reliable checking`
+// Rule: use Number.isNaN() for reliable check`
   },
 
   // ─── NAMASTE JAVASCRIPT — Akshay Saini ─────────────────────────
@@ -2551,22 +2375,14 @@ console.log(Number.isNaN(undefined)); // false
     q: "How does Execution Context work in JavaScript?",
     tags: ["namaste-js", "season1", "popular"],
     a: `// Execution Context = environment where JS code is evaluated
-// Two phases: Creation Phase + Execution Phase
+// Two phases: Creation + Execution
 
-// Global Execution Context (GEC) is created when JS starts:
-// 1. Creation Phase:
-//    - Global object (window) created
-//    - 'this' = window
-//    - Variables hoisted with undefined
-//    - Function declarations stored in memory
-
-// 2. Execution Phase:
-//    - Code runs line by line
-//    - Values assigned to variables
-//    - Functions create their own Execution Context when invoked
+// Global EC created when JS starts:
+// 1. Creation: window object, this=window, vars hoisted (undefined), functions stored
+// 2. Execution: code runs line by line, values assigned
 
 // Call Stack manages ECs (LIFO):
-// [global EC] → [foo() EC] → [bar() EC] → ... pops when done
+// [global EC] → [foo() EC] → [bar() EC] → pops when done
 
 console.log(a); // undefined (hoisted in creation phase)
 var a = 10;
@@ -2578,31 +2394,27 @@ console.log(a); // 10
   },
   {
     category: "Namaste JS",
-    q: "Hoisting — what gets hoisted and what doesn't?",
+    q: "Hoisting — what gets hoisted and what doesn't",
     tags: ["namaste-js", "season1", "popular"],
-    a: `// Hoisting = variables/functions are moved to top of their scope during creation phase
+    a: `// Hoisting = declarations moved to top of scope during creation phase
 
-// 1. var — hoisted with default value undefined
+// 1. var — hoisted with undefined
 console.log(x); // undefined
 var x = 5;
 
-// 2. function declaration — fully hoisted (definition stored)
+// 2. function declaration — fully hoisted
 sayHi(); // "Hi!"
 function sayHi() { console.log("Hi!"); }
 
-// 3. let / const — hoisted but NOT initialized (Temporal Dead Zone)
-// console.log(y); // ReferenceError: Cannot access before initialization
+// 3. let/const — hoisted but uninitialized (TDZ)
+// console.log(y); // ReferenceError
 let y = 10;
 
 // 4. function expression — NOT hoisted (treated as variable)
-// greet(); // TypeError: greet is not a function
 var greet = function() { console.log("Hey"); };
+// greet(); // TypeError if called before declaration
 
-// 5. Arrow functions — follow same hoisting rules as variable
-// console.log(typeof add); // undefined (var) or ReferenceError (let/const)
-const add = (a, b) => a + b;
-
-// Key takeaway: only var declarations and function declarations are usable before definition`
+// Key: only var declarations and function declarations usable before definition`
   },
   {
     category: "Namaste JS",
@@ -2611,31 +2423,25 @@ const add = (a, b) => a + b;
     a: `// Lexical Environment = Local Memory + Lexical Parent Reference
 // Scope Chain = chain of Lexical Environments
 
-// A function has access to:
-// - Its own variables
-// - Its parent function's variables
-// - Global variables
-// This is possible through the scope chain
+// Function can access: own vars, parent's vars, global vars
 
 function outer() {
   const a = 10;
 
   function inner() {
     const b = 20;
-    console.log(a + b); // 30 — inner can access 'a' from outer
+    console.log(a + b); // 30 — inner accesses 'a' from outer
   }
 
-  // console.log(b); // ReferenceError — b is not in outer's scope
   inner();
 }
-
 outer();
 
-// Scope chain resolution:
+// Scope resolution:
 // inner's scope → outer's scope → global scope
-// JS looks up the chain until found or throws ReferenceError
+// JS walks up until found or ReferenceError
 
-// Lexical Parent = where the function is physically defined (NOT where it's called)`
+// Lexical Parent = where function is physically defined, NOT where called`
   },
   {
     category: "Namaste JS",
@@ -2644,39 +2450,39 @@ outer();
     a: `// Block = { } — creates scope for let/const (NOT for var)
 
 {
-  var a = 10;   // scoped to function/global (NOT block)
+  var a = 10;   // scoped to function/global
   let b = 20;   // block scoped
   const c = 30; // block scoped
 }
-console.log(a); // 10 — accessible outside block
-// console.log(b); // ReferenceError: b is not defined
+console.log(a); // 10 — accessible
+// console.log(b); // ReferenceError
 
 // Shadowing — inner variable with same name as outer
-let x = 100;   // script scope
+let x = 100;
 {
-  let x = 200; // block scope — shadows outer x
+  let x = 200; // shadows outer x
   console.log(x); // 200
 }
 console.log(x); // 100
 
-// var shadowing (different rules — crosses scope boundaries):
+// var ignores block scope:
 var y = 50;
 {
-  var y = 60; // same as redeclaring — affects outer y
+  var y = 60; // affects outer y
 }
-console.log(y); // 60 — var ignores block scope
+console.log(y); // 60
 
-// Illegal shadowing — let in outer, var in inner throws error`
+// Illegal: let outer, var inner → error`
   },
   {
     category: "Namaste JS",
     q: "Closures in depth — what, why, practical use cases",
     tags: ["namaste-js", "season1", "popular"],
     a: `// Closure = function bundled with its lexical environment
-// Even after outer function returns, inner function "remembers" outer variables
+// Inner function "remembers" outer vars even after outer returns
 
 function createCounter() {
-  let count = 0;  // this variable persists in closure
+  let count = 0; // persists in closure
   return function() {
     count++;
     return count;
@@ -2693,15 +2499,15 @@ console.log(counter()); // 3
 // 2. Module pattern
 // 3. Function factories (currying)
 // 4. Memoization
-// 5. setTimeout loops (IIFE fix)
+// 5. setTimeout loop fix
 
-// Common interview question:
+// Classic interview:
 for (var i = 1; i <= 3; i++) {
   setTimeout(function() { console.log(i); }, i * 1000);
 }
-// Output: 4, 4, 4 (all share same 'i' from closure)
+// Output: 4, 4, 4
 
-// Fix with closure (IIFE):
+// Fix with IIFE:
 for (var i = 1; i <= 3; i++) {
   (function(j) {
     setTimeout(function() { console.log(j); }, j * 1000);
@@ -2714,122 +2520,105 @@ for (var i = 1; i <= 3; i++) {
     q: "Function Statement vs Expression vs Declaration",
     tags: ["namaste-js", "season1"],
     a: `// Function Statement (Declaration) — hoisted
-function greet() {
-  console.log("Hello");
-}
-// Can be called before declaration due to hoisting
+function greet() { console.log("Hello"); }
 
 // Function Expression — stored in variable, NOT hoisted
-const greet2 = function() {
-  console.log("Hi");
-};
-// greet2 is hoisted (var/let) but function assigned is NOT available yet
+const greet2 = function() { console.log("Hi"); };
 
-// Anonymous Function — function without a name
+// Anonymous Function — function without name
 const add = function(a, b) { return a + b; };
-// Used as: callback, IIFE, higher-order functions
 
 // Named Function Expression
 const factorial = function fact(n) {
-  return n <= 1 ? 1 : n * fact(n - 1); // named ref for recursion
+  return n <= 1 ? 1 : n * fact(n - 1); // named for recursion
 };
-// 'fact' is only accessible inside the function body
+// 'fact' accessible only inside function body
 
-// First Class Functions — functions can be:
-// 1. Assigned to variables
-// 2. Passed as arguments to other functions
-// 3. Returned from other functions
-// JS treats functions as first-class citizens`
+// First Class Functions — JS treats functions as values:
+// 1. Assign to variable
+// 2. Pass as argument
+// 3. Return from function`
   },
   {
     category: "Namaste JS",
-    q: "First Class Functions and Callback Functions",
+    q: "First Class Functions vs Callback Functions",
     tags: ["namaste-js", "season1", "popular"],
     a: `// First Class Functions = functions treated as values
+
 // 1. Assign to variable:
 const fn = function() { console.log("assigned"); };
 
 // 2. Pass as argument (Callback):
 function process(arr, callback) {
-  for (let i = 0; i < arr.length; i++) {
-    callback(arr[i]);
-  }
+  for (let i = 0; i < arr.length; i++) callback(arr[i]);
 }
 process([1, 2, 3], console.log);
 
-// 3. Return from function (Higher-Order Function):
+// 3. Return from function (Higher-Order):
 function multiplyBy(factor) {
-  return function(number) {
-    return number * factor;
-  };
+  return function(number) { return number * factor; };
 }
 const double = multiplyBy(2);
 console.log(double(5)); // 10
 
-// Callback function = function passed to another function
-// Synchronous callbacks: forEach, map, filter
-// Asynchronous callbacks: setTimeout, event handlers, fetch
-
-// The callback queue stores async callbacks
-// Event loop moves them to call stack when it's empty`
+// Callbacks: sync (forEach, map) or async (setTimeout, fetch)
+// Callback queue stores async callbacks
+// Event loop moves them to call stack when empty`
   },
   {
     category: "Namaste JS",
-    q: "Event Loop — the complete picture",
+    q: "Event Loop — explain the complete picture",
     tags: ["namaste-js", "season1", "popular"],
-    a: `// JS is single-threaded, non-blocking via Event Loop
+    a: `// JS single-threaded, non-blocking via Event Loop
 // Components: Call Stack, Web APIs, Callback Queue, Microtask Queue
 
 // 1. Call Stack — executes synchronous code (LIFO)
-// 2. Web APIs — browser provides (DOM, setTimeout, fetch, etc.)
-// 3. Callback/Task Queue — macrotasks (setTimeout, setInterval, DOM events)
+// 2. Web APIs — browser provides (DOM, setTimeout, fetch)
+// 3. Callback Queue — macrotasks (setTimeout, setInterval, DOM events)
 // 4. Microtask Queue — higher priority (Promise.then, MutationObserver)
 
 // Execution order:
-// 1. Execute all synchronous code (clear call stack)
-// 2. Run ALL microtasks (Promise callbacks)
-// 3. Pick ONE macrotask from callback queue
-// 4. Repeat (event loop cycles)
+// 1. All sync code
+// 2. ALL microtasks
+// 3. ONE macrotask
+// 4. Repeat
 
 console.log("1");                        // sync
 setTimeout(() => console.log("2"), 0);    // macrotask
 Promise.resolve().then(() => console.log("3")); // microtask
 console.log("4");                        // sync
 
-// Output: 1, 4, 3, 2
-// Why: sync(1,4) → microtask(3) → macrotask(2)`
+// Output: 1, 4, 3, 2`
   },
   {
     category: "Namaste JS",
-    q: "setTimeout — trust issues and how it works",
+    q: "setTimeout — trust issues and how it really works",
     tags: ["namaste-js", "season1"],
-    a: `// setTimeout doesn't guarantee exact delay — it guarantees MINIMUM delay
-// It waits for the call stack to be empty + callback queue to reach it
+    a: `// setTimeout guarantees MINIMUM delay, not exact timing
+// Waits for call stack empty + callback queue to reach it
 
 // Trust issue 1: Timer starts AFTER current execution
 console.log("start");
 setTimeout(() => console.log("timeout"), 0);
-// Even with 0ms, it's queued — runs after all sync code
 let i = 0;
-while (i < 1000000000) i++; // blocks for ~1s
+while (i < 1000000000) i++; // blocks ~1s
 console.log("end");
-// Output: start, end, timeout (timeout waits for while loop!)
+// Output: start, end, timeout (timeout waited for while loop!)
 
-// Trust issue 2: Nested setTimeout minimum delay
-// HTML spec: nested timeouts >= 4ms (after 5 levels)
+// Trust issue 2: Nested setTimeout minimum delay (4ms after 5 levels)
 
-// Trust issue 3: setTimeout with closures
+// Trust issue 3: setTimeout + closure with var
 for (var i = 1; i <= 3; i++) {
   setTimeout(function() { console.log(i); }, i * 1000);
 }
-// Output: 4, 4, 4 — all see the same 'i'
+// Output: 4, 4, 4 — all see same i
 // Fix: use let (block scoped) or IIFE closure`
   },
   {
     category: "Namaste JS",
-    q: "Promises and Async/Await in depth",
+    q: "Promises and Async/Await — in-depth explanation",
     tags: ["namaste-js", "season1", "popular"],
-    a: `// Promise = object representing eventual completion/failure of async operation
+    a: `// Promise = object for eventual completion/failure of async operation
 // States: pending → fulfilled / rejected
 
 const promise = new Promise((resolve, reject) => {
@@ -2837,66 +2626,62 @@ const promise = new Promise((resolve, reject) => {
 });
 
 promise
-  .then(data => console.log(data))   // "Data loaded"
+  .then(data => console.log(data))
   .catch(err => console.error(err))
   .finally(() => console.log("Done"));
 
-// Promise chaining:
+// Chaining:
 fetch("/api/user")
   .then(res => res.json())
   .then(user => fetch("/api/orders/" + user.id))
   .then(res => res.json())
   .then(orders => console.log(orders))
-  .catch(err => console.error("Any failure in chain", err));
+  .catch(err => console.error("Any failure", err));
 
-// Async/Await — syntactic sugar over Promises
+// Async/Await — sugar over Promises
 async function getOrders() {
   try {
     const res = await fetch("/api/user");
     const user = await res.json();
     const ordersRes = await fetch("/api/orders/" + user.id);
-    const orders = await ordersRes.json();
-    return orders;
+    return await ordersRes.json();
   } catch (err) {
     console.error(err);
   }
 }
 
-// await can only be used inside async function
+// await only inside async function
 // async function always returns a Promise`
   },
   {
     category: "Namaste JS",
-    q: "'this' keyword in different contexts",
+    q: "'this' keyword in different contexts explained",
     tags: ["namaste-js", "season1", "popular"],
-    a: `// 'this' depends on HOW a function is called (execution context)
+    a: `// 'this' depends on HOW a function is called
 
-// 1. Global space → window/global
-console.log(this); // window (browser)
+// 1. Global → window
+console.log(this); // window
 
-// 2. Regular function → window (undefined in strict mode)
+// 2. Regular function → window (undefined in strict)
 function show() { console.log(this); }
-show(); // window | undefined (strict)
+show(); // window
 
 // 3. Object method → the object
-const obj = {
-  name: "JS",
-  show() { console.log(this.name); }
-};
+const obj = { name: "JS", show() { console.log(this.name); } };
 obj.show(); // "JS"
 
-// 4. Arrow function → inherits from parent scope (lexical this)
+// 4. Arrow function → inherits from parent (lexical this)
 const obj2 = {
   name: "Test",
-  show: () => console.log(this.name) // this = window, NOT obj2
+  show: () => console.log(this.name) // this = window
 };
 
-// 5. Event handler → the element that fired the event
+// 5. Event handler → the element
 button.addEventListener("click", function() {
   console.log(this); // button element
 });
 
-// 6. Constructor → the new instance
+// 6. Constructor → new instance
 function Person(n) { this.name = n; }
 const p = new Person("John");
 console.log(p.name); // "John"`
@@ -2905,9 +2690,7 @@ console.log(p.name); // "John"`
     category: "Namaste JS",
     q: "call, apply, bind — detailed explanation",
     tags: ["namaste-js", "season1", "popular"],
-    a: `// All three explicitly set 'this' — key differences:
-
-// call(thisArg, arg1, arg2, ...) — invoked immediately, args passed individually
+    a: `// call(thisArg, arg1, arg2...) — invoked immediately, args individually
 function greet(greeting) {
   return greeting + ", " + this.name;
 }
@@ -2917,15 +2700,14 @@ console.log(greet.call(user, "Hello")); // "Hello, John"
 // apply(thisArg, [argsArray]) — invoked immediately, args as array
 console.log(greet.apply(user, ["Hi"])); // "Hi, John"
 
-// bind(thisArg, arg1, ...) — returns NEW function with bound 'this'
+// bind(thisArg, arg1...) — returns NEW function, NOT invoked
 const boundGreet = greet.bind(user, "Hey");
 console.log(boundGreet()); // "Hey, John"
-// bind is NOT invoked immediately — useful for callbacks, event handlers
 
-// Practical: borrowing methods
+// Method borrowing:
 const arr = [1, 2, 3];
-const max = Math.max.apply(null, arr); // old way
-const max2 = Math.max(...arr);         // modern way
+const max = Math.max.apply(null, arr); // old
+const max2 = Math.max(...arr);         // modern
 
 // Polyfill of bind:
 Function.prototype.myBind = function(context, ...args) {
@@ -2937,18 +2719,17 @@ Function.prototype.myBind = function(context, ...args) {
   },
   {
     category: "Namaste JS",
-    q: "Prototypal Inheritance and Prototype Chain",
+    q: "Prototypal Inheritance and the Prototype Chain",
     tags: ["namaste-js", "season1", "advanced"],
-    a: `// Every JS object has a hidden [[Prototype]] (accessible via __proto__)
-// When accessing a property, JS walks the prototype chain until found or null
+    a: `// Every JS object has hidden [[Prototype]] (__proto__)
+// Property lookup walks prototype chain until found or null
 
 const animal = { eats: true };
 const rabbit = { jumps: true };
-
-rabbit.__proto__ = animal; // set prototype
+rabbit.__proto__ = animal;
 
 console.log(rabbit.jumps); // true (own)
-console.log(rabbit.eats);  // true (inherited from animal)
+console.log(rabbit.eats);  // true (inherited)
 
 // Constructor functions:
 function Person(name) {
@@ -2961,34 +2742,30 @@ Person.prototype.sayHello = function() {
 const john = new Person("John");
 console.log(john.sayHello()); // "Hi, I'm John"
 
-// What happens with 'new' keyword:
-// 1. New empty object created {}
-// 2. [[Prototype]] linked to Person.prototype
+// 'new' keyword:
+// 1. Creates empty object {}
+// 2. Links [[Prototype]] to Person.prototype
 // 3. 'this' points to new object
-// 4. Returns the object (if function doesn't return object)
+// 4. Returns object (unless function returns object)
 
 // Prototype chain:
-// john → Person.prototype → Object.prototype → null
-console.log(john.__proto__ === Person.prototype);       // true
-console.log(Person.prototype.__proto__ === Object.prototype); // true
-console.log(Object.prototype.__proto__);                // null`
+// john → Person.prototype → Object.prototype → null`
   },
   {
     category: "Namaste JS",
-    q: "Higher-Order Functions — map, filter, reduce",
+    q: "Higher-Order Functions — map, filter, reduce explained",
     tags: ["namaste-js", "season2", "popular"],
     a: `// Higher-Order Functions = functions that take/return other functions
-// Named after the Closure/Frist-class concepts
 
 const nums = [1, 2, 3, 4, 5];
 
 // map — transform each element
 const doubled = nums.map(n => n * 2);  // [2, 4, 6, 8, 10]
 
-// filter — keep elements passing a test
+// filter — keep elements passing test
 const evens = nums.filter(n => n % 2 === 0); // [2, 4]
 
-// reduce — accumulate into a single value
+// reduce — accumulate into single value
 const sum = nums.reduce((acc, n) => acc + n, 0); // 15
 
 // Chaining:
@@ -2996,7 +2773,7 @@ const result = nums
   .filter(n => n > 2)
   .map(n => n * 10)
   .reduce((a, b) => a + b, 0);
-console.log(result); // (3+4+5)*10 = 120
+console.log(result); // 120
 
 // Polyfill for map:
 Array.prototype.myMap = function(callback) {
@@ -3009,10 +2786,10 @@ Array.prototype.myMap = function(callback) {
   },
   {
     category: "Namaste JS",
-    q: "Debouncing and Throttling — implementation",
+    q: "Debouncing and Throttling — implement both",
     tags: ["namaste-js", "season2", "popular"],
     a: `// DEBOUNCE — fires AFTER user stops triggering for N ms
-// Use: search input, auto-save, resize handler
+// Use: search input, auto-save, resize
 
 function debounce(fn, delay) {
   let timer;
@@ -3021,10 +2798,9 @@ function debounce(fn, delay) {
     timer = setTimeout(() => fn.apply(this, args), delay);
   };
 }
-// Usage: const debouncedSearch = debounce(searchAPI, 500);
 
 // THROTTLE — fires at most ONCE every N ms
-// Use: scroll handler, mousemove, game loop
+// Use: scroll, mousemove, game loop
 
 function throttle(fn, limit) {
   let inThrottle = false;
@@ -3036,55 +2812,45 @@ function throttle(fn, limit) {
     }
   };
 }
-// Usage: const throttledScroll = throttle(handleScroll, 200);
 
-// Key difference:
-// Debounce: "wait until pause" — good for API calls while typing
-// Throttle: "pace the execution" — good for scroll position tracking`
+// Key: Debounce = "wait until pause", Throttle = "pace execution"`
   },
   {
     category: "Namaste JS",
-    q: "Currying in JavaScript",
+    q: "How does currying work in JavaScript?",
     tags: ["namaste-js", "season2", "advanced"],
-    a: `// Currying = transforming f(a, b, c) → f(a)(b)(c)
+    a: `// Currying = transform f(a,b,c) → f(a)(b)(c)
 // Uses closures to remember arguments
 
-// Manual currying:
+// Manual:
 function multiply(a) {
-  return function(b) {
-    return a * b;
-  };
+  return function(b) { return a * b; };
 }
 const double = multiply(2);
 console.log(double(5)); // 10
 
-// Arrow syntax:
+// Arrow:
 const curry = (a) => (b) => (c) => a + b + c;
 console.log(curry(1)(2)(3)); // 6
 
 // Currying with bind:
 function sum(a, b, c) { return a + b + c; }
 const add5 = sum.bind(null, 5);
-const add5And3 = add5.bind(null, 3);
-console.log(add5And3(2)); // 10
+console.log(add5(3, 2)); // 10
 
-// Practical uses:
-// 1. Partially apply functions for reuse
-// 2. Create specialized functions from general ones
-// 3. Event handlers with custom data
+// Uses: partial application, specialized functions, event handlers
 
 // Infinite currying — sum(1)(2)(3)...()
 function infiniteSum(a) {
   return function(b) {
-    if (b !== undefined) return infiniteSum(a + b);
-    return a;
+    return b !== undefined ? infiniteSum(a + b) : a;
   };
 }
 console.log(infiniteSum(1)(2)(3)(4)()); // 10`
   },
   {
     category: "Namaste JS",
-    q: "Polyfills — writing your own bind, map, filter, reduce",
+    q: "Polyfills — implement your own bind, map, filter, reduce",
     tags: ["namaste-js", "season2", "popular"],
     a: `// Polyfill for Function.prototype.bind:
 Function.prototype.myBind = function(context, ...args) {
@@ -3128,7 +2894,7 @@ Array.prototype.myReduce = function(callback, initialValue) {
   },
   {
     category: "Namaste JS",
-    q: "Error Handling — try/catch/finally, custom errors",
+    q: "Error Handling — try/catch/finally and custom errors",
     tags: ["namaste-js", "season2"],
     a: `// try — wrap risky code
 // catch — handle error
@@ -3160,13 +2926,13 @@ try {
   fetchData();
 } catch (err) {
   if (err instanceof NetworkError) {
-    console.log(\`Network issue: \${err.statusCode} - \${err.message}\`);
+    console.log(\`Network: \${err.statusCode} - \${err.message}\`);
   } else {
-    throw err; // rethrow unknown errors
+    throw err; // rethrow unknown
   }
 }
 
-// Async error handling with async/await:
+// Async error handling:
 async function getData() {
   try {
     const res = await fetch("/api/data");
@@ -3180,10 +2946,10 @@ async function getData() {
   },
   {
     category: "Namaste JS",
-    q: "Generator Functions and Iterators",
+    q: "Generator Functions and Iterators explained",
     tags: ["namaste-js", "season2", "advanced"],
-    a: `// Generator = function that CAN be paused/resumed with yield
-// Returns an iterator with .next() and .return() methods
+    a: `// Generator = function that can be paused/resumed with yield
+// Returns iterator with .next() and .return()
 
 function* numberGenerator() {
   yield 1;
@@ -3202,25 +2968,19 @@ function* idMaker() {
   let id = 0;
   while (true) yield id++;
 }
-
 const ids = idMaker();
 console.log(ids.next().value); // 0
 console.log(ids.next().value); // 1
 
-// Use cases:
-// 1. Custom iterators
-// 2. Infinite sequences
-// 3. Async generators (redux-saga)
-// 4. Lazy evaluation
+// Uses: custom iterators, infinite sequences, redux-saga, lazy eval
 
-// Generator with async (simplifies async code):
+// Async generator:
 async function* fetchPages(urls) {
   for (const url of urls) {
     yield await fetch(url).then(r => r.json());
   }
 }
 
-// for await...of consumes async generators
 for await (const page of fetchPages(["/api/1", "/api/2"])) {
   console.log(page);
 }`
