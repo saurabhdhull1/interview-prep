@@ -1694,10 +1694,15 @@ console.log(isPalindrome("A man, a plan, a canal: Panama")); // true`
   }
 }
 
-// One-liner:
+fizzBuzz(15);
+// Output: 1, 2, Fizz, 4, Buzz, Fizz, 7, 8, Fizz, Buzz, 11, Fizz, 13, 14, FizzBuzz
+
+// One-liner (returns array instead of logging):
 const fb = (n) => Array.from({length: n}, (_, i) =>
   (++i % 3 ? "" : "Fizz") + (i % 5 ? "" : "Buzz") || i
-);`
+);
+console.log(fb(15));
+// Output: [1, 2, "Fizz", 4, "Buzz", "Fizz", 7, 8, "Fizz", "Buzz", 11, "Fizz", 13, 14, "FizzBuzz"]`
   },
   {
     category: "Coding Challenges",
@@ -1760,6 +1765,13 @@ console.log(removeFalsy([0, 1, false, 2, "", 3, null, undefined, NaN, 4]));
   return copy;
 }
 
+// Usage:
+const original = { a: 1, b: { c: [1, 2], d: new Date() } };
+const cloned = deepClone(original);
+cloned.b.c.push(3);
+console.log(original.b.c); // [1, 2] — original unchanged (deep copy works)
+console.log(cloned.b.c);   // [1, 2, 3]
+
 // Modern: structuredClone(obj) — built-in`
   },
   {
@@ -1798,7 +1810,13 @@ myPromiseAll([Promise.resolve(1), Promise.resolve(2)]).then(console.log);`
     }, delay);
     if (callNow) fn.apply(this, args);
   };
-}`
+}
+
+// Usage example:
+const log = debounce((msg) => console.log(msg), 200);
+log("Hello");             // scheduled
+log("World");             // cancelled previous, scheduled again
+// After 200ms of no calls → Output: "World" (only the last call fires)`
   },
   {
     category: "Coding Challenges",
@@ -1971,7 +1989,8 @@ for (var i = 0; i < 3; i++) {
     category: "Output Prediction",
     q: "console.log(1 && 2 || 0 && 3) — what prints?",
     tags: ["accenture"],
-    a: `// && has higher precedence than ||
+    a: `// Output: 2
+// && has higher precedence than ||
 // 1 && 2 → 2
 // 0 && 3 → 0 (short-circuit)
 // 2 || 0 → 2 (short-circuit)
@@ -1981,9 +2000,10 @@ console.log(1 && 2 || 0 && 3); // 2`
     category: "Output Prediction",
     q: "console.log('5' - 3) and console.log('5' + 3) — what prints?",
     tags: ["accenture"],
-    a: `console.log("5" - 3); // 2  (subtraction → numeric coercion)
+    a: `// Output: 2, "53", 10, NaN
+console.log("5" - 3); // 2  (subtraction → numeric coercion)
 console.log("5" + 3); // "53" (plus with string → concatenation)
-console.log("5" * "2"); // 10 (multiplication → numeric coercion)
+console.log("5" * "2"); // 10 (multiplication forces numeric coercion)
 console.log("hello" - 1); // NaN`
   },
   {
@@ -2009,7 +2029,8 @@ function show() {
     category: "Output Prediction",
     q: "console.log([] + {}) and console.log({} + []) — what prints?",
     tags: ["accenture", "advanced"],
-    a: `console.log([] + {}); // "[object Object]"
+    a: `// Output: "[object Object]" (both cases)
+console.log([] + {}); // "[object Object]"
 // [].toString() = "" + {}.toString() = "[object Object]"
 
 console.log({} + []); // "[object Object]"
@@ -2510,7 +2531,7 @@ console.log("" + (3 + 4) + "5"); // "75" but computed as number first`
     category: "Output Prediction",
     q: "console.log(Number.isNaN(NaN)) vs console.log(isNaN(NaN))",
     tags: ["accenture"],
-    a: `// Both return true for NaN, BUT:
+    a: `// Output: true, true, true, false, true, false
 console.log(Number.isNaN(NaN));  // true — strict (only true for NaN)
 console.log(isNaN(NaN));         // true — coerces first
 
