@@ -2232,8 +2232,6 @@ prevProps === nextProps (shallow)
   const catFilters = document.getElementById("categoryFilters");
   const stats = document.getElementById("stats");
   const totalStats = document.getElementById("totalStats");
-  const quickTags = document.getElementById("quickTags");
-
   const categories = [...new Set(questions.map(q => q.category))];
   const allTags = [...new Set(questions.flatMap(q => q.tags || []))];
   const DOT_COLORS = {
@@ -2291,48 +2289,23 @@ prevProps === nextProps (shallow)
     catFilters.appendChild(btn);
   });
 
-  // Quick tags bar (top)
-  const allQuick = document.createElement("button");
-  allQuick.className = "tag-btn active";
-  allQuick.textContent = "All";
-  allQuick.dataset.filter = "all";
-  quickTags.appendChild(allQuick);
-
-  ["popular", "accenture", "advanced", "react", "node", "system-design"].forEach(tag => {
-    const btn = document.createElement("button");
-    btn.className = "tag-btn";
-    btn.textContent = tag.charAt(0).toUpperCase() + tag.slice(1);
-    btn.dataset.filter = tag;
-    quickTags.appendChild(btn);
-  });
-
-  // Event delegation for filters
-  function handleFilterClick(target) {
-    const filter = target.dataset.filter;
-    if (!filter) return;
-
-    document.querySelectorAll(".cat-item, .tag-btn").forEach(el => el.classList.remove("active"));
-    target.classList.add("active");
+  // ─── FILTER HANDLING ───
+  function applyFilter(filter) {
+    document.querySelectorAll(".cat-item").forEach(el => el.classList.remove("active"));
     document.querySelectorAll(`[data-filter="${filter}"]`).forEach(el => el.classList.add("active"));
-
     activeFilter = filter;
     render();
   }
 
-  function setupFilter(element) {
-    element.addEventListener("click", function(e) {
-      const target = e.target.classList.contains("cat-item") ? e.target
-        : e.target.closest(".cat-item");
-      if (target) return handleFilterClick(target);
-
-      const tagTarget = e.target.classList.contains("tag-btn") ? e.target
-        : e.target.closest(".tag-btn");
-      if (tagTarget) return handleFilterClick(tagTarget);
+  function setupCategoryFilter(container) {
+    container.addEventListener("click", function(e) {
+      const target = e.target.closest(".cat-item");
+      if (!target) return;
+      applyFilter(target.dataset.filter);
     });
   }
-  setupFilter(tagFilters);
-  setupFilter(catFilters);
-  setupFilter(quickTags);
+  setupCategoryFilter(tagFilters);
+  setupCategoryFilter(catFilters);
 
   // Search
   searchInput.addEventListener("input", function() {
