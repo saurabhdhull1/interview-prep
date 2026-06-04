@@ -1,6 +1,6 @@
 # JavaScript Interview Prep
 
-A comprehensive interview preparation resource with **107 JavaScript questions** across **17 categories** — covering everything from core JavaScript concepts to React, Node.js, TypeScript, system design, and behavioural HR questions. Designed for the **Custom Software Engineer** role at Accenture.
+A comprehensive interview preparation resource with **142 JavaScript questions** across **18 categories** — covering everything from core JavaScript concepts to React, Node.js, TypeScript, system design, Namaste JavaScript (Akshay Saini), and behavioural HR questions. Designed for the **Custom Software Engineer** role at Accenture.
 
 ## Live Demo
 
@@ -10,7 +10,7 @@ A comprehensive interview preparation resource with **107 JavaScript questions**
 
 | Category | Questions |
 |---|---|
-| Core JavaScript | 25 |
+| Core JavaScript | 30 |
 | React.js | 11 |
 | Node.js / Express | 6 |
 | TypeScript | 4 |
@@ -23,20 +23,22 @@ A comprehensive interview preparation resource with **107 JavaScript questions**
 | System Design | 2 |
 | Testing | 2 |
 | Agile / Scrum | 1 |
-| Coding Challenges | 14 |
-| Output Prediction | 13 |
+| Coding Challenges | 19 |
+| Output Prediction | 19 |
 | HR & General | 6 |
 | Advanced / Misc | 7 |
+| Namaste JavaScript | 19 |
 
 ## Features
 
-- **107 curated questions** — most-asked JavaScript interview questions with commented answers
-- **17 categories** — Core JS, React, Node, TypeScript, Databases, Security, System Design, and more
+- **142 curated questions** — most-asked JavaScript interview questions with commented answers
+- **18 categories** — Core JS, React, Node, TypeScript, Databases, Security, System Design, Namaste JS, and more
 - **Accenture-focused** — dedicated HR questions, output prediction gotchas, and coding challenges
-- **Sidebar filtering** — filter by tag (Popular, Accenture, Advanced) or by category
+- **Quiz mode** — one-question-at-a-time view with Next/Previous navigation and keyboard shortcuts
+- **Sidebar filtering** — filter by tag (Popular, Accenture, Advanced, Namaste) or by category
 - **Search** — search across questions, answers, and categories
-- **Mobile friendly** — responsive design with sliding sidebar
-- **Commented answers** — all code examples include inline explanations
+- **Mobile friendly** — responsive design with hamburger toggle and sliding sidebar
+- **Commented answers** — all code examples include inline explanations with `// Output:` visibility
 - **Covers your resume** — React, Node.js, Redis, WebSockets, JWT, CI/CD, TypeScript, and more
 
 ## Topics Covered
@@ -51,8 +53,9 @@ A comprehensive interview preparation resource with **107 JavaScript questions**
 - **Performance** — Core Web Vitals, caching strategies, frontend optimization
 - **DevOps** — Git branching strategies, CI/CD pipelines
 - **System Design** — scalable chat apps, microservices vs monoliths
-- **Coding Challenges** — two sum, palindrome, anagrams, flatten array, debounce, Promise.all, FizzBuzz
-- **Output Prediction** — tricky JS coercion questions frequently asked at Accenture
+- **Namaste JavaScript** — execution context, hoisting, scope chain, closures, `this`, event loop, promises, call/apply/bind, prototypes, HOFs, debounce/throttle, currying, polyfills, error handling, generators
+- **Coding Challenges** — two sum, palindrome, anagrams, flatten array, debounce, Promise.all, FizzBuzz, valid parentheses, Kadane's algorithm, merge sorted arrays, string rotation
+- **Output Prediction** — tricky JS coercion and scope questions frequently asked at Accenture
 - **HR Questions** — self-introduction, strengths/weaknesses, why Accenture, 5-year plan
 
 ## How to Use
@@ -61,7 +64,8 @@ A comprehensive interview preparation resource with **107 JavaScript questions**
 2. Use the **sidebar** to filter by category or tag
 3. Click any question to reveal the commented answer
 4. Use **search** to find specific topics
-5. On mobile, tap the **hamburger icon** to open the sidebar
+5. Click **Start Quiz** to test yourself — navigate with Next/Previous buttons or keyboard arrows
+6. On mobile, tap the **hamburger icon** to open the sidebar
 
 ## Tech Stack
 
